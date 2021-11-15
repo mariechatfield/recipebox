@@ -9,10 +9,10 @@
 
 # ### Prefix Declarations  
 # The significant prefix in this file is the default (`:`).  
-# __We recommend changing `democorpprofile` to your organization id.__  
+# __We recommend changing `recipebox` to your organization id.__  
 # *All of the others can just be copied in.*
 
-@prefix :  <https://democorpprofile.linked.data.world/d/ddw-catalogs/> .
+@prefix :  <https://recipebox.linked.data.world/d/ddw-catalogs/> .
 @prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix owl:  <http://www.w3.org/2002/07/owl#> .
