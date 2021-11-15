@@ -1,0 +1,1171 @@
+# # demo.ttl
+
+# This page is a presentation of [this demo.ttl](demo.ttl) file.
+# You can download this file and upload it to an organization's `ddw-catalogs` dataset to see a fully functional, customized metadata profile.
+
+# This file is represented in Turtle, a human readable RDF serialization format. If you aren't familiar with this format, I highly recommend taking a glance at https://www.w3.org/TR/turtle/
+
+# --- 
+
+# ### Prefix Declarations  
+# The significant prefix in this file is the default (`:`).  
+# __We recommend changing `democorpprofile` to your organization id.__  
+# *All of the others can just be copied in.*
+
+@prefix :  <https://democorpprofile.linked.data.world/d/ddw-catalogs/> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix label: <http://purl.org/net/vocab/2004/03/label#> .
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
+@prefix dwec-database: <https://dwec.data.world/v0/database-types/> .
+@prefix dwec-jdbc: <https://dwec.data.world/v0/jdbc-types/> .
+@prefix dwec:  <https://dwec.data.world/v0/> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix database-types:  <https://dwec.data.world/v0/database-types/> .
+@prefix jdbc-types:  <https://dwec.data.world/v0/jdbc-types/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix csvw:   <http://www.w3.org/ns/csvw#>.
+@prefix dcat:   <http://www.w3.org/ns/dcat#>.
+
+
+# ### Defining Custom Types
+
+# By defining custom types, you can expand on the default types that DWEC starts with.
+# The basic top level types are:
+#   1. `dwec:Database`, `dwec:DatabaseTable`, `dwec:DatabaseView`, and `dwec:DatabaseColumn`
+#   2. `dwec:Analysis`
+#   3. `dwec:BusinessTerm`
+
+   # Specify which resource type you want to subclass with `rdfs:subClassOf`  
+   # Set the label which will show up in the data.world UI with `rdfs:label`  
+   # Define the plural form with `label:plural`
+
+# ---
+
+# An example subclass of `dwec:Analysis`.
+# ![subclass](https://p195.p4.n0.cdn.getcloudapp.com/items/E0uY0mrR/e20b3351-55c1-4d5a-8342-29da0d688f6a.jpg?v=81bacc18914ed57d6af2ec568963aec3 "Example of a subclass and where the labels are applied in the UI")
+
+:UseCase
+   a rdfs:Class ;
+   rdfs:subClassOf dwec:Analysis;
+   rdfs:label "Use Case" ;
+   label:plural "Use Cases" ;
+.
+
+# An example of a custom glossary term, a Metric.
+
+:Metric
+   a rdfs:Class ;
+   rdfs:subClassOf dwec:BusinessTerm;
+   rdfs:label "Metric" ;
+   label:plural "Metrics" ;
+.
+
+# Additional example of a custom glossary term type.
+
+:Acronym
+   a rdfs:Class ;
+   rdfs:subClassOf dwec:BusinessTerm;
+   rdfs:label "Acronym" ;
+   label:plural "Acronyms" ;
+.
+
+# A SearchIndex can subclass a `dwec:DatabaseTable`.
+
+:SearchIndex
+  a rdfs:Class ;
+   rdfs:subClassOf dwec:DatabaseTable ;
+   rdfs:label "Search Index" ;
+   label:plural "Search Indices" ;
+.
+
+# A SearchField could be modeled off of a `dwec:DatabaseColumn`.  
+
+:SearchField
+  a rdfs:Class ;
+   rdfs:subClassOf dwec:DatabaseColumn ;
+   rdfs:label "Search Field" ;
+   label:plural "Search Fields" ;
+.
+
+# _`dwec:DwDataset` and `dwec:DwProject` subclasses currently have no effect._
+
+# ## Metadata Sections
+
+# *These sections are static. You can't define custom sections at this time..*
+
+# ![metadata sections](https://p195.p4.n0.cdn.getcloudapp.com/items/xQub1N6Z/898f97b1-5be7-4fe4-b3ba-8b5bc3720e8b.jpg?v=dd3e2468d32e5fb2feadf721041ee955 "General layout of page")
+
+# The Informational Metadata section appears near the top of the page, under the title and description.
+# Values presented here should be applicable to the most amount of users of the catalog, both technical and non-technical.
+
+:MetadataSectionInformational
+  rdf:type dwec:MetadataSection ;
+  rdfs:label "Informational Metadata" ;
+  dwec:inMetadataProfile :MetadataProfileDefault ;
+.
+
+# Technical Metadata is rendered towards the bottom of the page. The audience for these values tends to be technical in nature, like server names and calculations.
+
+:MetadataSectionTechnical
+  rdf:type dwec:MetadataSection ;
+  rdfs:label "Technical Metadata" ;
+  dwec:inMetadataProfile :MetadataProfileDefault ;
+.
+
+# People metadata will show up in the sidebar. Fields like "Data Owner", "Subject Matter Expert", "Owner", etc, can be placed here.
+
+:MetadataSectionPeople
+  rdf:type dwec:MetadataSection ;
+  rdfs:label "People Metadata" ;
+  dwec:inMetadataProfile :MetadataProfileDefault ;
+.
+
+# Additional Sidebar Metadata section, renders underneath the People Metadata section.
+
+:MetadataSectionSidebar
+  rdf:type dwec:MetadataSection ;
+  rdfs:label "Sidebar Metadata" ;
+  dwec:inMetadataProfile :MetadataProfileDefault ;
+.
+
+# Quality Metadata section is currently a placeholder.
+
+:MetadataSectionQuality
+  rdf:type dwec:MetadataSection ;
+  rdfs:label "Quality Metadata" ;
+  dwec:inMetadataProfile :MetadataProfileDefault ;
+.
+
+# Source Metadata is currently only used to override the primary button on datasets  
+# *Using this section is rare*
+
+:MetadataSectionSource
+  rdf:type dwec:MetadataSection ;
+  rdfs:label "Source Metadata" ;
+  dwec:inMetadataProfile :MetadataProfileDefault ;
+.
+
+#  
+
+:MetadataProfileDefault
+  rdf:type dwec:MetadataProfile ;
+  rdfs:label "Metadata profile default" ;
+  dwec:primaryStatusClass :ApprovalStatus ;
+.
+
+# ### Asset Statuses
+
+# Asset Statuses can be applied to resources and render through the app, like in search and when browsing the metadata catalog.
+# You can customize your org's asset statuses by subclassing `dwec:AssetStatus` like we've done here.
+
+# ---
+
+# First, define a subclass of `dwec:AssetStatus` and declare it's `dwec:inMetadataProfile`. It's normal to only have one metadata profile defined: `:MetadataProfileDefault`.
+
+:ApprovalStatus
+  rdf:type rdfs:Class ;
+  rdfs:label "Approval status" ;
+  rdfs:subClassOf dwec:AssetStatus ;
+  dwec:inMetadataProfile :MetadataProfileDefault ;
+.
+
+# An asset status with a "positive" disposition will render green.
+# ![asset_status](https://p195.p4.n0.cdn.getcloudapp.com/items/Blu4l2YG/76b26e29-a2d4-4c76-9927-5ddda3a37326.jpg?v=de5ca409e8388f03216b8f264aafcab4 "Positive disposition: Approved status example")
+
+:ApprovalStatusApproved
+  rdf:type :ApprovalStatus ;
+  rdfs:label "Approved" ;
+  dwec:hasDisposition :DispositionPositive ;
+.
+
+:ApprovalStatusCertified
+  rdf:type :ApprovalStatus ;
+  rdfs:label "Certified" ;
+  dwec:hasDisposition :DispositionPositive ;
+.
+
+# An asset status with a "negative" disposition will render red, such as "Warning", "Rejected", or "Deprecated"
+
+:ApprovalStatusDeprecated
+  rdf:type :ApprovalStatus ;
+  rdfs:label "Deprecated" ;
+  dwec:hasDisposition :DispositionNegative ;
+.
+
+# ![asset_status](https://p195.p4.n0.cdn.getcloudapp.com/items/NQuwQ5wq/99551af2-f548-4583-8a2f-5a3870a55ae3.jpg?v=81b9793365d87205a8f8f0d3e140a75b "Negative disposition: Rejected status example")
+
+:ApprovalStatusRejected
+  rdf:type :ApprovalStatus ;
+  rdfs:label "Rejected" ;
+  dwec:hasDisposition :DispositionNegative ;
+.
+
+# An asset status with a "neutral" disposition will render grey:
+
+# ![asset_status](https://p195.p4.n0.cdn.getcloudapp.com/items/WnuYjpYo/8d92e5c6-bed9-4c98-8d1b-b02da555518d.jpg?v=a56e1866b2b04d1c1f0a36923014dd37 "Neutral disposition: Pending status example")
+
+:ApprovalStatusPending
+  rdf:type :ApprovalStatus ;
+  rdfs:label "Pending" ;
+  dwec:hasDisposition :DispositionNeutral ;
+.
+
+
+:ApprovalStatusUnderReview
+  rdf:type :ApprovalStatus ;
+  rdfs:label "Under Review" ;
+  dwec:hasDisposition :DispositionNeutral ;
+.
+
+# data.world currently accepts these dispositions: Positive, Neutral, and Negative
+
+:DispositionNegative
+  rdf:type dwec:Disposition ;
+  rdfs:label "Negative" ;
+.
+:DispositionNeutral
+  rdf:type dwec:Disposition ;
+  rdfs:label "Neutral" ;
+.
+:DispositionPositive
+  rdf:type dwec:Disposition ;
+  rdfs:label "Positive" ;
+.
+
+# ### Metadata Presentations
+
+# Metadata Presentations, defined as `dwec:MetadataPresentation` resources, map data from the underlying graph model to the presentation layer in the browser.  
+
+# ![basic metadata fields](https://p195.p4.n0.cdn.getcloudapp.com/items/5zuBxqm6/e2947905-5791-4eef-9f19-624bebc0513c.jpg?v=b25d9fd50fa4a7dd050fe03a4062967c "Some basic examples")
+
+# ---
+
+# As an example, let's create a field called "Domain Expert" in the `:MetadataSectionPeople`, so it'll render in the sidebar. 
+
+:MetadataPresentation-BusinessTerm-DomainExpert
+  rdf:type dwec:MetadataPresentation ;
+  rdfs:label "Domain Expert" ;
+  dwec:inMetadataSection :MetadataSectionPeople ;
+.
+
+# Now, we'll apply "Domain Expert" to `dwec:BusinessTerms` with `dwec:forType`.
+# `dwec:forType` will apply it's `dwec:MetadataPresentations` to all subclasses of `dwec:BusinessTerms`, like `:Acronym` and `:Metric`.  
+# 
+# *This behavior isn't overrideable. So be aware, when using `dwec:forType`, make sure that field can be applied to all subclasses, no exceptions.*
+
+:MetadataPresentation-BusinessTerm-DomainExpert
+  dwec:forType dwec:BusinessTerm ;
+.
+
+# Finally, we'll need to specify a place to read and store values with `dwec:viaProperty`.  
+# We'll learn more about `dwec:viaProperty` in the [Bulk Loading Data](#bulk-loading-data) section.
+
+:MetadataPresentation-BusinessTerm-DomainExpert
+  dwec:viaProperty :domain_expert ;
+.
+
+# ---
+
+# A slightly more advanced example, we'll create a field called "Formula" in the `:MetadataSectionTechnical` section.
+
+:MetadataPresentation-Metric-Formula
+  rdf:type dwec:MetadataPresentation ;
+  rdfs:label "Formula" ;
+  dwec:inMetadataSection :MetadataSectionTechnical ;
+  dwec:viaProperty :formula ;
+.
+
+# A Formula only applies to our custom subclass of `dwec:BusinessTerms`, a `:Metric`. So we'll specify `:Metric` with `dwec:forType` instead of the parent `dwec:BusinessTerm` class. 
+
+:MetadataPresentation-Metric-Formula
+  dwec:forType :Metric ;
+.
+
+# Now we'll add `dwec:presentationSortOrder`, which dictates the top-to-bottom ordering when presenting the field in the UI.  
+# `dwec:editHint` will present helper text when editing this value in the UI.  
+# We'll also specify a `dwec:displayHint` to show a value in a tooltip when user's hover over the value.
+
+:MetadataPresentation-Metric-Formula
+  dwec:presentationSortOrder  2 ;
+  dwec:editHint "Specify a formula for generating this Metric." ;
+  dwec:displayHint "The formula used for generating this Metric."
+.
+
+# Finally, we'll specify that this field should render as a multiline markdown value. We'll render all basic markdown values, including newlines, images, and embeds.
+
+:MetadataPresentation-Metric-Formula
+  rdf:type dwec:Multiline ;
+.
+
+# ![multiline](https://p195.p4.n0.cdn.getcloudapp.com/items/WnuYOn4A/542c954a-c2ac-4343-8edc-05cd49075c48.jpg?v=f67dfb32259c0075c8c3b47041e48239 "Multiline field with edit hints")
+
+# ---
+
+# Using `dwec:AdditionalProperty` for a field is a way to deprioritize a value - for the editing experience, we'll put fields like this in a dropdown menu, out of the mainstream UI flow.  
+# We recommend using this when you have a lot of metadata presentations set and you're trying to organize them.
+
+# ![additional value](https://p195.p4.n0.cdn.getcloudapp.com/items/RBuYGD7P/c611f888-4cde-4955-b61b-a7d203363ff3.gif?v=952403ede03dbc68dbb1cfccebd71bff "Tucked away under Add New Field")
+
+:MetadataPresentation--Additional-KnownIssues
+  rdf:type dwec:MetadataPresentation ;
+  rdf:type dwec:AdditionalProperty ;
+  rdfs:label "Known Issues" ;
+  dwec:forType dwec:BusinessTerm ;
+  dwec:forType dwec:DwDataset ;
+  dwec:inMetadataSection :MetadataSectionPeople ;
+  dwec:viaProperty :knownissues ;
+.
+
+# ---
+
+# Continuing to get more advanced, we'll create an "Owner" field in the `:MetadataSectionPeople` section.
+
+:MetadataPresentation-OwnerEmail
+  rdf:type dwec:MetadataPresentation ;
+  rdfs:label "Owner Email" ;
+  dwec:inMetadataSection :MetadataSectionPeople ;
+  dwec:viaProperty :owner_email ;
+.
+
+# We'll apply owner to multiple resource types with multiple `dwec:forType` calls
+
+:MetadataPresentation-OwnerEmail
+  dwec:forType :Acronym ;
+  dwec:forType :Metric ;
+  dwec:forType dwec:DatabaseTable ;
+.
+
+# We can add in a presentation template to customize how this value is shown in the UI. You can use Markdown for enhanced styling and customizability.  
+# *`dwec:presentationTemplate` currently only supports a single variable value `{{$1}}`, which you can use multiple times.*
+
+:MetadataPresentation-OwnerEmail
+  dwec:presentationTemplate "Contact [{{$1}}](mailto:{{$1}}) for questions regarding this resource" ;
+.
+
+# ---
+
+# #### Single Select Values
+
+# So far we've been only creating freetext fields. We can also create single and multiselect fields using predetermined ontologies.  
+# First we'll create a `dwec:MetadataPresentation` for Sensitivity
+
+# ![single select](https://p195.p4.n0.cdn.getcloudapp.com/items/X6uep64L/292bb071-2a85-41d5-b6eb-637881fd4103.jpg?v=598f486ba49e25c617c74ecb12b51b9d "Example single select value")
+
+:MetadataPresentation-Sensitivity
+  rdf:type                    dwec:MetadataPresentation ;
+  rdfs:label                  "Sensitivity" ;
+  dwec:forType                dwec:DatabaseTable ;
+  dwec:forType                dwec:DwDataset ;
+  dwec:forType                :UseCase ;
+  dwec:inMetadataSection      :MetadataSectionTechnical ;
+  dwec:presentationSortOrder  1 ;
+  dwec:viaProperty            :sensitivity ;
+.
+
+# When users are searching, we want them to be able to filter search results based on the value selected, so we'll add `dwec:Facetable`
+
+:MetadataPresentation-Sensitivity
+  rdf:type dwec:Facetable ;
+.
+
+# Additionally, we'll set this field as mandatory so that even when there is no value, it presents in the UI as "Not available"
+
+:MetadataPresentation-Sensitivity
+  rdf:type dwec:Mandatory ;
+.
+
+# Using `:sensitivy` above with `dwec:viaProperty`, we'll specify that this value should be a `skos:ConceptScheme`.
+
+:sensitivity  rdfs:range skos:ConceptScheme.
+:sensitivity  dwec:inConceptScheme :sensitivity_classifications .
+
+# And add some `skos:Concept` values to this `skos:ConceptScheme`
+
+:sensitivity_pii
+  rdf:type  skos:Concept ;
+  # Tie this `skos:Concept` to a `skos:ConceptScheme` with `skos:inScheme`
+  skos:inScheme       :sensitivity_classifications ;
+  # Set 2 labels, `skos:prefLabel` ("preferable label") and `skos:altLabel` ("alternative label")  
+  # We use both of these in the UI depending on the content.
+  skos:prefLabel      "PII" ;
+  skos:altLabel       "Personally Identifiable Information" ;
+  # Give this a unique `dct:identifier` value
+  dct:identifier  "pii" ;
+.
+
+# Rinse and repeat above for all known values.
+
+:sensitivity_personnel_data
+  rdf:type  skos:Concept ;
+  skos:inScheme       :sensitivity_classifications ;
+  skos:prefLabel      "Personnel Data" ;
+  skos:altLabel       "Personnel Data" ;
+  dct:identifier  "personnel_data" ;
+.
+
+:sensitivity_country_data
+  rdf:type  skos:Concept ;
+  skos:inScheme       :sensitivity_classifications ;
+  skos:prefLabel      "Secure Country Data" ;
+  skos:altLabel       "Secure Country Data" ;
+  dct:identifier  "secure" ;
+.
+
+# ---
+
+# #### Multiselect & Hierarchical Values
+
+
+# That covers single select, let's do multiselect, and add in some hierarchical data.  
+# First let's define a more complex `skos:ConceptScheme` with 3 levels: Global, Region, and Country
+
+:geography  rdf:type  skos:ConceptScheme .
+
+# Provide a root we'll call "Global"
+
+:geography_global  rdf:type  skos:Concept ;
+        skos:inScheme       :geography ;
+        skos:prefLabel      "Global" ;
+        skos:altLabel       "Global" ;
+        dct:identifier  "Global" .
+
+# Specify a region, "Europe"
+
+:geography_europe  rdf:type  skos:Concept ;
+        skos:inScheme       :geography ;
+        skos:prefLabel      "Europe" ;
+        skos:altLabel       "Europe" ;
+        dct:identifier  "Europe" ;
+        # To define hierarchies, we'll use `skos:broader` 
+        skos:broader        :geography_global .
+
+# Specify a second region, "Middle East & Africa"
+
+:geography_eema  rdf:type  skos:Concept ;
+        skos:inScheme       :geography ;
+        skos:prefLabel      "Middle East & Africa" ;
+        skos:altLabel       "Middle East & Africa" ;
+        dct:identifier  "Middle East & Africa" ;
+        skos:broader        :geography_global .
+
+# Define a few countries in both Europe and Middle East & Africa
+
+# Ireland is in Europe
+
+:geography_ireland
+  rdf:type            skos:Concept ;
+  skos:inScheme       :geography ;
+  skos:prefLabel      "Ireland" ;
+  skos:altLabel       "Ireland" ;
+  dct:identifier  "Ireland" ;
+  skos:broader        :geography_europe .
+
+# Italy is in Europe
+
+:geography_italy  rdf:type  skos:Concept ;
+  skos:inScheme       :geography ;
+  skos:prefLabel      "Italy" ;
+  skos:altLabel       "Italy" ;
+  dct:identifier  "Italy" ;
+  skos:broader        :geography_europe .
+
+# Kenya is in Africa
+
+:geography_kenya  rdf:type  skos:Concept ;
+  skos:inScheme       :geography ;
+  skos:prefLabel      "Kenya" ;
+  skos:altLabel       "Kenya" ;
+  dct:identifier  "Kenya" ;
+  skos:broader        :geography_eema .
+
+# Kuwait is in Middle East
+
+:geography_kuwait  rdf:type  skos:Concept ;
+  skos:inScheme       :geography ;
+  skos:prefLabel      "Kuwait" ;
+  skos:altLabel       "Kuwait" ;
+  dct:identifier  "Kuwait" ;
+  skos:broader        :geography_eema .
+
+# Now let's create a `dwec:MetadataPresentation` with some properties we've seen before
+
+# ![editing a hierarchical value](https://p195.p4.n0.cdn.getcloudapp.com/items/nOuojOE8/2c9da648-bacf-4970-b400-f0b85c48ac72.jpg?v=d11fd955693fc1d66be2158f2d8f9453)
+
+:MetadataPresentation-GeographiesAvailable
+  rdf:type                    dwec:MetadataPresentation ;
+  rdf:type                    dwec:Facetable ;
+  rdfs:label                  "Geography" ;
+  dwec:forType                dwec:BusinessTerm ;
+  dwec:forType                dwec:Analysis ;
+  dwec:forType                dwec:DwDataset ;
+  dwec:presentationSortOrder  3 ;
+  dwec:inMetadataSection      :MetadataSectionInformational ;
+  dwec:viaProperty            :geographies_available
+.
+
+# Tie the property to the `skos:ConceptScheme`
+
+:geographies_available  rdfs:range skos:ConceptScheme .
+:geographies_available  dwec:inConceptScheme :geography .
+
+# Finally, mark this as a multiselect with `dwec:Multivalued`
+
+:MetadataPresentation-GeographiesAvailable
+  rdf:type                    dwec:Multivalued ;
+.
+
+# ### Relationship Presentations
+
+# Our catalog ships with some default relationships between metadata resources out of the box.
+
+# ![out of the box relationships](https://p-c44557.f3.n0.cdn.getcloudapp.com/items/7KuApgAy/4fd0135a-8a80-45fa-a00f-327bdbdb31c2.jpeg)
+
+# If you don't see an existing default relationship between the resource classes, you will need to create a custom relationship.
+
+# `dwec:RelationshipPresentations` allow you to add on to those existing built-in relationships.
+
+# ![relationship presentation](https://p195.p4.n0.cdn.getcloudapp.com/items/p9ub12Nw/3051123d-b7dc-450a-939e-9d798b6fc4d7.jpg?v=a0da7331fbb08fadd52fb233b674450a)
+
+# ---
+
+# First we'll specify a `dwec:RelationshipSection`
+
+:RelationshipSection
+  rdf:type                dwec:RelationshipSection ;
+  rdfs:label              "Relationship Section" ;
+  dwec:inMetadataProfile  :MetadataProfileDefault ;
+.
+
+# And now specify a new `dwec:RelationshipPresentation` in that section.
+
+:AcronymToMetric
+  rdf:type                    dwec:RelationshipPresentation ;
+  dwec:inRelationshipSection  :RelationshipSection ;
+.
+
+# Just like for `dwec:MetadataPresentations`, `dwec:forType` will instruct our interface on what resource types to apply this section to.
+
+:AcronymToMetric
+  dwec:forType                :Acronym ;
+.
+
+# `dwec:forTargetType` specifies what types of resources we should be presenting, in this case we should expect a table of `:Metrics`
+
+:AcronymToMetric
+  dwec:forTargetType          :Metric ;
+.
+
+# `dwec:forRelationType` indicates what predicate we should use when searching. Since `:Acronym` and `:Metrics` might relate in several ways, this `dwec:RelationshipPresentation` specifies:
+# > "For this Acronym, find me all the Metrics that relate via the \"dwec:related\" predicate."
+
+:AcronymToMetric
+  dwec:forRelationshipType    dwec:related ;
+.
+
+# We should customize the header text of the `dwec:RelationshipSection` as well
+
+:AcronymToMetric
+  dwec:relationshipTerm       [
+    rdf:type      dwec:RelationshipTerm ;
+    rdfs:label    "is referenced by" ;
+    label:plural  "are referenced by" ;
+  ] ;
+  dwec:resourceTerm [
+    rdf:type      dwec:ResourceTerm ;
+    rdfs:label    "Metric" ;
+    label:plural  "Metrics" ;
+  ] ;
+.
+
+# ---
+
+# Since all relationships have directionality, we'll often want to "look backwards" from a resource. For that, we'll use `dwec:inversePath`.
+
+:MetricToAcronym
+  rdf:type                    dwec:RelationshipPresentation ;
+  dwec:inRelationshipSection  :RelationshipSection ;
+  dwec:forType                :Metric ;
+  dwec:forTargetType          :Acronym ;
+  # We'll use `dwec:inversePath` in a blank node here to "flip" the relationship presentation for use of other pages. 
+  dwec:forRelationshipType    [ dwec:inversePath dwec:related ] ;
+  dwec:relationshipTerm       [
+    rdf:type      dwec:RelationshipTerm ;
+    rdfs:label    "references" ;
+    label:plural  "reference" ;
+  ] ;
+  dwec:resourceTerm [
+      rdf:type      dwec:ResourceTerm ;
+      rdfs:label    "Acronym" ;
+      label:plural  "Acronyms" ;
+  ] ;
+.
+
+# ---
+
+# ### API Bindings
+
+# We've seen the use of `dwec:viaProperty` above in all of our `dwec:MetadataPresentations`. We'll dive into bulk loading further down, but let's talk about how to make these custom fields readable and editable via the [Public API](https://apidocs.data.world).
+
+# *API Bindings are optional. Only set them if you intend to use the data.world APIs to read and write data.*
+
+# ---
+
+# We can define an API Binding with `dwec:APIBinding`.  
+# We'll make it `dwec:Multivalued` so the API knows to accept an array of values.  
+# We use `dwec:forProperty` as a place to set and retrieve the value. Any `dwec:MetadataPresentations` that use the same value for `dwec:viaProperty` will be affected when updating the values through API calls.  
+# And we'll give it a unique `dct:identifier` to read it from the API.
+
+:APIBinding-geographies_available
+  rdf:type dwec:APIBinding ;
+  rdf:type dwec:Multivalued ;
+  dwec:forProperty :geographies_available ;
+  dct:identifier "geographies" ;
+.
+
+# A freetext field example `dwec:APIBinding`
+
+# [`GET /metadata/glossary/democorp/exampleterm`](https://apidocs.data.world/toolkit/api/api-endpoints/metadata-glossary/getmetadataglossary)
+
+#     ...
+#     properties: {
+#       "owner_email": "tom@company.com",
+#       "geographies": ["Kenya", "Italy"]
+#     },
+#     ...
+
+:APIBinding-owner_email
+  rdf:type dwec:APIBinding ;
+  dwec:forProperty :owner_email ;
+  dct:identifier "owner_email" ;
+.
+
+
+# ---
+
+# ## Bulk loading data
+
+# All metadata on data.world can be bulk loaded by the same process that configures the metadata profile - uploading of `dwec` specific RDF to the `ddw-catalogs`.  
+
+# We'll show you how to bulk load Business Terms, Analysis, and Data resources, including metadata about scanned databases and data.world datasets. 
+
+# We also support bulk loading resources that are not represented by one of the aforementioned classes.
+
+# #### Business Terms
+
+# First, we'll create a basic Business Term, of type `dwec:BusinessTerm`, with some common fields, like `dct:title`, `dct:description`, and `dct:abstract`.
+
+# ![dwec:BusinessTerm example](https://p195.p4.n0.cdn.getcloudapp.com/items/xQubrQnw/a054ffca-dc0d-4fd2-abb8-5d0ef0e972d4.jpg?v=7ee64113a097c0c3af15ce9025992ef0)
+
+:Term-Customer
+  rdf:type      dwec:BusinessTerm ;
+  rdfs:label    "Customer" ;
+  dct:title     "Customer" ;
+  dct:identifier "customer" ;
+  # Descriptions should be kept short, they are used in a lot of contexts to provide some more information about this resource.
+  dct:description "A customer is an organization or individual who has purchased service through our company" ;
+  # The abstract is longer text and can contain Markdown.
+  dct:abstract   "A customer is any active or inactive paying consumer of our platform. To be considered a customer, there must be data or users from the customer on the platform." ;
+.
+
+# Recall that `dwec:BusinessTerms` can have a custom attribute `:domain_expert` and `:geographies_available` specified, we can bulk load that value like:
+
+:Term-Customer :domain_expert "tom@company.com" .
+:Term-Customer :geographies_available :geography_global .
+
+# This profile has already declared a custom subclass of `dwec:BusinessTerm` called a `:Metric`, so let's bulk load one of those as well by changing the `rdf:type` that we specify.
+
+:Term-CustomerLifetimeValue
+  rdf:type          :Metric ;
+  dct:identifier   "customer-lifetime-value" ;
+  rdfs:label       "customer-lifetime-value" ;
+  dct:title        "Customer Lifetime Value" ;
+  dct:description  "Customer lifetime value is the total worth to a business of a customer over the whole period of their relationship. " ;
+  dct:abstract     "CLV is distinct from the Net Promoter Score (NPS) that measures customer loyalty, and CSAT that measures customer satisfaction because it is tangibly linked to revenue rather than a somewhat intangible promise of loyalty and satisfaction." ;
+.
+
+# We'll also crate an `:Acronym`, another custom subclass.
+
+:Term-CLV
+  rdf:type :Acronym ;
+  dct:identifier "clv" ;
+  dct:title "CLV" ;
+  dct:description "CLV, or Customer Lifetime Value" ;
+.
+
+# ---
+
+# Each of these need a `dcat:CatalogRecord` to tie it to a `dwec:Catalog`, which we'll learn more about below.  
+# A `dcat:CatalogRecord` consists of 2 timestamps: `dct:issued` and `dct:modified`, and a `foaf:primaryTopic` pointing to the actual resource.
+
+:CatalogRecord-Term-Customer
+  rdf:type        dcat:CatalogRecord ;
+  dct:issued     "2019-06-07T04:01:25.865Z"^^xsd:dateTime ;
+  dct:modified   "2019-06-07T04:18:18.871Z"^^xsd:dateTime ;
+  foaf:primaryTopic  :Term-Customer ;
+.
+
+:CatalogRecord-Term-CustomerLifetimeValue
+  rdf:type        dcat:CatalogRecord ;
+  dct:issued     "2019-06-07T04:01:25.865Z"^^xsd:dateTime ;
+  dct:modified   "2019-06-07T04:18:18.871Z"^^xsd:dateTime ;
+  foaf:primaryTopic  :Term-CustomerLifetimeValue ;
+.
+
+:CatalogRecord-Term-CLV
+  rdf:type        dcat:CatalogRecord ;
+  dct:issued     "2019-06-07T04:01:25.865Z"^^xsd:dateTime ;
+  dct:modified   "2019-06-07T04:18:18.871Z"^^xsd:dateTime ;
+  foaf:primaryTopic  :Term-CLV ;
+.
+
+# ---
+
+# #### Analysis
+
+# A `dwec:Analysis` is an analytical resource, like a Dashboard or a Report. These are most commonly collected from sources like Tableau Server or PowerBI Report Server.
+
+# ![dwec:Analysis example](https://p195.p4.n0.cdn.getcloudapp.com/items/qGuE2BNZ/8d6c7736-19bd-4068-b3c9-c2f57f56aeec.jpg?v=de4c8aee70f8f44510ff4a825a40483e "A full dashboard with image preview")
+
+# It's extremely common to use a subclass of `dwec:Analysis`, and data.world ships with a few, like `dwec:TableauDashboard`. 
+
+:TableauDashboard-HaitianAidTracking
+  a                  dwec:TableauDashboard ;
+  rdfs:label         "Haitian Aid Tracking" ;
+  dct:identifier     "529115f7-5efb-4b87-afff-ce0b8d685c3c" ;
+  dct:description    "Tableau Dashboard which live tracks current aid sources this quarter." ;
+  dct:title          "Haitian Aid Tracking" ;
+.
+
+# In addition to base fields above, you can specify a `dwec:previewImage` to show an embedded image of the resource on the page, and set a `dwec:source` so users can link off to the actual resource, like a TableauServer URL.
+
+:TableauDashboard-HaitianAidTracking
+  dwec:previewImage  :PreviewImage-HatianAidTracking ;
+  dwec:source        :ExternalResource-HatianAidTracking ;
+.
+
+# `dwec:Image` should have a `dwec:externalUrl` set. This can also be a base64 encoded data URI of an image.
+
+:PreviewImage-HatianAidTracking
+  a                 dwec:Image ;
+  dwec:externalUrl  "https://www.filestackapi.com/api/file/f6uK8UtFQpGVqKJP8XAY" ;
+.
+
+# A `dwec:ExternalResource` also needs a `dwec:externalUrl` for linking the user.
+
+:ExternalResource-HatianAidTracking
+  a                 dwec:ExternalResource ;
+  dwec:externalUrl  "http://132.145.136.166/#/views/HaitianAidTracking/HaitianAidTracking" ;
+.
+
+# Recall that subclasses of `dwec:Analysis` can have a custom geography field set via `geographies_available`, we can set that like:
+
+:TableauDashboard-HatianAidTracking :geographies_available :geography_ireland .
+
+# Similar to `dwec:BusinessTerms` above, you'll need a `dcat:CatalogRecord` to add this resource to one or more `dwec:Catalogs`. 
+
+:CatalogRecord-TableauDashboard-HaitianAidTracking
+  a                  dcat:CatalogRecord ;
+  dct:issued         "2019-06-02T18:49:03Z" ;
+  dct:modified       "2019-06-02T20:02:20Z" ;
+  foaf:primaryTopic  :TableauDashboard-HaitianAidTracking ;
+.
+
+# #### Data Resources
+
+# The common data resource are `dwec:Database`, `dwec:DatabaseTable`, `dwec:DatabaseView`, and `dwec:DatabaseColumn`, and any resource that subclasses those.
+
+# ![data resource](https://p195.p4.n0.cdn.getcloudapp.com/items/rRuG2RE1/dc69e408-c04e-4e2b-ab2d-3d70f439a70b.jpg?v=d71ac670430ede95f1cb6ba1d46a015c)
+
+# The most common place to generate these are from [DWCC, which can be found on Dockerhub](https://hub.docker.com/r/datadotworld/dwcc). 
+
+# For the purposes of a thorough catalog file, we'll bring in a simple table with a few columns.
+
+
+# We'll start with a `dwec:Database`, which lists out the `csvw:table` resources we've collected under `csvw:table`
+
+:Database-NIGHTOWL_DB
+  rdf:type   dwec:Database ;
+  dct:identifier           "NIGHTOWL_DB" ;
+  csvw:table               :DatabaseTable-NIGHTOWL_DB.AID_STATUS ;
+  dwec:databaseConnection  [ a                    dwec:DatabaseConnectionInfo ;
+                              dwec:databaseName    "NIGHTOWL_DB" ;
+                              dwec:databaseSchema  "NIGHTOWL_SCHEMA" ;
+                              dwec:databaseServer  "demo.snowflakecomputing.com" ;
+                              dwec:databasePort    443;
+                              dwec:jdbcUrl         "jdbc:snowflake://demo.snowflakecomputing.com/?role=ACCOUNTADMIN" ;
+                            ] ;
+  dwec:databaseType        dwec-database:snowflake ;
+.
+
+# The `dwec:DatabaseTable` need a reference back to the dataset it belongs to with `dct:isPartOf`
+# `dct:title` and `dct:description` are preferred for human readability, but our platform will fall back to using `dct:identifier` if no title is specified. 
+
+:DatabaseTable-NIGHTOWL_DB.AID_STATUS
+        a                 dwec:DatabaseTable ;
+        dct:description   "Status of different aid drops and deliveries." ;
+        dct:title         "AID_STATUS (SourceDB)" ;
+        dct:identifier    "AID_STATUS" ;
+        dct:isPartOf      :Database-NIGHTOWL_DB;
+.
+
+# This table has 2 `dwec:DatabaseColumns`
+
+:DatabaseColumn-NIGHTOWL_DB.AID_STATUS.OrderStatusID
+        a                    dwec:DatabaseColumn ;
+        dct:identifier       "Aid.OrderStatusID" ;
+        # Reference back to the table
+        dct:isPartOf         :DatabaseTable-NIGHTOWL_DB.AID_STATUS ;
+        csvw:name            "Aid.OrderStatusID" ;
+        dwec:columnIndex     "1"^^xsd:int ;
+        dwec:columnSize      "10"^^xsd:int ;
+        dwec:columnTypeName  "NUMBER" ;
+        dwec:jdbcType        dwec-jdbc:BIGINT .
+
+:DatabaseColumn.NIGHTOWL_DB.AID_STATUS.OrderStatus
+        a                    dwec:DatabaseColumn ;
+        dct:identifier       "Aid.OrderStatus" ;
+        dct:isPartOf         :DatabaseTable-NIGHTOWL_DB.AID_STATUS ;
+        csvw:name            "Aid.OrderStatus" ;
+        dwec:columnIndex     "2"^^xsd:int ;
+        dwec:columnSize      "50"^^xsd:int ;
+        dwec:columnTypeName  "VARCHAR" ;
+        dwec:jdbcType        dwec-jdbc:VARCHAR .
+
+# Finally, some `dcat:CatalogRecords` to tie them into a `dwec:Catalog`
+
+:CatalogRecord-DatabaseColumn.NIGHTOWL_DB.AID_STATUS.OrderStatus 
+  a                  dcat:CatalogRecord ;
+  dct:issued         "2020-02-17T21:47:58.085Z"^^xsd:dateTime ;
+  dct:modified       "2020-02-17T21:47:58.085Z"^^xsd:dateTime ;
+  foaf:primaryTopic  :DatabaseColumn.NIGHTOWL_DB.AID_STATUS.OrderStatus ;
+.
+
+:CatalogRecord-DatabaseColumn-NIGHTOWL_DB.AID_STATUS.OrderStatusID
+  a                  dcat:CatalogRecord ;
+  dct:issued         "2020-02-17T21:47:58.084Z"^^xsd:dateTime ;
+  dct:modified       "2020-02-17T21:47:58.084Z"^^xsd:dateTime ;
+  foaf:primaryTopic  :DatabaseColumn-NIGHTOWL_DB.AID_STATUS.OrderStatusID ;
+.
+
+:CatalogRecord-DatabaseTable-NIGHTOWL_DB.AID_STATUS
+  a                  dcat:CatalogRecord ;
+  dct:issued         "2020-02-17T21:47:55.972Z"^^xsd:dateTime ;
+  dct:modified       "2020-02-17T21:47:55.972Z"^^xsd:dateTime ;
+  foaf:primaryTopic  :DatabaseTable-NIGHTOWL_DB.AID_STATUS ;
+.
+
+# #### Generic resource classes
+
+# First, we define the resource class.
+
+# This class can also be defined in a separate ontology, such as one created using gra.fo.
+
+:GenericObject a owl:Class ;
+    rdfs:label "Generic Object" ;
+    label:plural "Generic Objects" ;
+.
+
+# Then we define the resource.
+
+:GenericObject-MyGenericObject  rdf:type    :GenericObject ;
+        dct:identifier   "MyGenericObject" ;
+        rdfs:label       "My Generic Object" ;
+        dct:title        "My Generic Object" ;
+        dct:description  "A description of my generic object." ;
+.
+
+# Don't forget a `dcat:CatalogRecord` to tie it a `dwec:Catalog`.
+
+:CatalogRecord-MyGenericObject
+        rdf:type           dcat:CatalogRecord ;
+        dct:issued         "2019-11-11T04:01:25.865Z"^^xsd:dateTime ;
+        dct:modified       "2020-11-11T04:18:18.871Z"^^xsd:dateTime ;
+        foaf:primaryTopic  :GenericObject-MyGenericObject .
+
+# ##### We can also subclass generic resource classes.
+
+# We use the same syntax as before, when declaring a subclass.
+
+:MoreGenericObject a owl:Class ;
+    rdfs:subClassOf :GenericObject ;
+    rdfs:label "More Generic Object" ;
+    label:plural "More Generic Objects" ;
+.
+
+# Then we define the resource.
+
+:MoreGenericObject-MyMoreGenericObject  rdf:type    :MoreGenericObject ;
+        dct:identifier   "MyMoreGenericObject" ;
+        rdfs:label       "My More Generic Object" ;
+        dct:title        "My More Generic Object" ;
+        dct:description  "A description of my more generic object." ;
+.
+
+# Don't forget a `dcat:CatalogRecord` to tie it a `dwec:Catalog`.
+
+:CatalogRecord-MyMoreGenericObject
+        rdf:type           dcat:CatalogRecord ;
+        dct:issued         "2019-11-11T04:01:25.865Z"^^xsd:dateTime ;
+        dct:modified       "2021-11-11T04:18:18.871Z"^^xsd:dateTime ;
+        foaf:primaryTopic  :MoreGenericObject-MyMoreGenericObject .
+
+
+# ---
+
+# #### Bulk loading dataset metadata
+
+# You can also bulk load data for a `dwec:DwDataset`, as long as the `dct:identifier` matches the ID of the dataset. You can do this before the dataset is actually created, or afterwards.
+
+:Dataset-BulkLoaded 
+  a dwec:DwDataset ;
+  dct:identifier "example-bulk-loaded" ;
+.
+
+# Recall that we've set a few custom `dwec:MetadataPresentations` for `dwec:DwDataset`, we can set those values like this.
+
+:Dataset-BulkLoaded 
+  :knownissues "No known issues" ;
+  :sensitivity :sensitivity_personnel_data ;
+.
+
+# ---
+
+# ##### Overriding Launch Workspace / Request Access
+
+# Optionally, you can set a custom URL that overrides the typical "Launch workspace" or "Request Access" button on a dataset, but shows a "Get Data" button with a custom URL.
+
+# ![example external url on a dataset](https://p195.p4.n0.cdn.getcloudapp.com/items/E0uYDAzA/fcdaa43c-d61e-43f9-9e15-50d4066bab69.jpg?v=b39c2222136db2555625b192e0e87ede)
+
+# First we create the `dwec:ExternalResource` with a `dwec:externalUrl` set.
+
+:BulkLoadedExternalUrl
+  rdf:type          dwec:ExternalResource ;
+  dwec:externalUrl  "https://democorpcompany.servicenow.com/requests/data?id=example-bulk-loaded" ;
+.
+
+# Then we set that to the bulk loaded `dwec:DwDataset` we just created
+
+:Dataset-BulkLoaded
+  :externalUrl  :BulkLoadedExternalUrl ;
+.
+
+# And to make it show up in the UI, and be editable, you need to add the following `dwec:MetadataPresentation` to the `:MetadataSectionSource` section.
+
+:MetadataPresentation-URL
+ rdf:type dwec:MetadataPresentation ;
+ # This exact label is important to keep
+ rdfs:label "External URL" ;
+ dwec:forType dwec:DwDataset ;
+ dwec:editHint "Optional: a link to an external dataset. This will direct users to \"Get data\" at the top of the page." ;
+ dwec:inMetadataSection :MetadataSectionSource ;
+ dwec:viaProperty :externalUrl ;
+.
+
+# *The same works for Projects as well as Datasets*
+
+# ---
+
+# ### Bulk loading relationships and asset statuses
+
+# So far, we've defined custom classes, relationships, and metadata presentations, and a handful of example resources. We can relate these resources together easily using RDF.
+
+# We can declare this dashboard `dwec:usesDataFrom` one of our tables.
+
+:TableauDashboard-HatianAidTracking dwec:usesDataFrom :DatabaseTable-NIGHTOWL_DB.AID_STATUS .
+
+# This dashboard also relates to a few terms
+
+:TableauDashboard-HatianAidTracking dwec:subject :Term-Customer .
+:TableauDashboard-HatianAidTracking dwec:subject :Term-CustomerLifetimeValue .
+
+# We've defined a custom `dwec:RelationshipPresentation` to relate `:Metrics` and `:Acronyms`, which we can bulk load like this.
+
+:Term-CLV dwec:related :Term-CustomerLifetimeValue . 
+
+# *In the near future, you'll be able to specify your own custom predicates, like `:isAcronymOf`, to make this more semantically accurate.*
+
+# #### Bulk setting Asset Statues
+
+# We can set some asset statuses using `dwec:hasAssetStatus`
+
+:DatabaseTable-NIGHTOWL_DB.AID_STATUS dwec:hasAssetStatus :ApprovalStatusCertified .
+:Term-CustomerLifetimeValue dwec:hasAssetStatus :ApprovalStatusPending .
+:TableauDashboard-HatianAidTracking dwec:hasAssetStatus :ApprovalStatusApproved .
+
+
+# ### Defining dwec:Catalogs
+
+# A dwec:Catalog is a collection of resources, which can be configured to be by physical resource, like a Snowflake database, or logically, like the Marketing Department's data
+# Each resource on our platform requires a `dct:identifier`.
+# `dct:title` is used in our platform. Keep it succinct, users will identify the collection based on this title.
+# `dcat:records` are a list of dwec:CatalogRecords that belong to this catalog.  
+# A single `dwec:CatalogRecord` can belong to more than 1 `dwec:Catalog`
+
+:Catalog-Demo
+  a               dwec:Catalog ;
+  dct:identifier  "Demo Catalog" ;
+  dct:title       "Demo Catalog" ;
+  dct:description "A demo showcasing some of the base functionality of data.world's metadata catalog, including tables, dashboards, and business terms" ;
+  dct:issued      "2020-02-17T21:41:17.675Z"^^xsd:dateTime ;
+  dct:modified    "2020-02-17T21:41:17.675Z"^^xsd:dateTime ;
+  dcat:record
+    :CatalogRecord-Term-CustomerLifetimeValue ,
+    :CatalogRecord-Term-CLV ,
+    :CatalogRecord-Term-Customer ,
+    :CatalogRecord-DatabaseTable-NIGHTOWL_DB.AID_STATUS ,
+    :CatalogRecord-DatabaseColumn-NIGHTOWL_DB.AID_STATUS.OrderStatusID ,
+    :CatalogRecord-DatabaseColumn.NIGHTOWL_DB.AID_STATUS.OrderStatus  ,
+    :CatalogRecord-TableauDashboard-HaitianAidTracking ,
+    :CatalogRecord-MyGenericObject ,
+    :CatalogRecord-MyMoreGenericObject ;
+.
+
+# Resource can live in multiple `dwec:Catalog`s, so we'll add a few to this second catalog.
+
+:Catalog-GlossaryOnly
+  a               dwec:Catalog ;
+  dct:identifier  "Glossary Only Library" ;
+  dct:title       "Glossary Only Library" ;
+  dct:description "An example glossary only library" ;
+  dct:issued      "2020-06-05T21:41:17.675Z"^^xsd:dateTime ;
+  dct:modified    "2020-06-05T21:41:17.675Z"^^xsd:dateTime ;
+  dcat:record 
+    :CatalogRecord-Term-CustomerLifetimeValue ,
+    :CatalogRecord-Term-CLV ,
+    :CatalogRecord-Term-Customer ;
+.
+
+# # Wrapping it all up
+
+# We'll define a `owl:Ontology` (*this is largely copy and paste*)
+
+:
+  rdf:type owl:Ontology ;
+  rdfs:label "Demo Metadata Profile" ;
+  owl:imports dwec: ;
+  owl:imports database-types: ;
+  owl:imports jdbc-types: ;
+.
+
+# We declare a default metadata profile and set the `:ApprovalStatus` via `dwec:primaryStatusClass`
+
+:MetadataProfileDefault
+  rdf:type dwec:MetadataProfile ;
+  rdfs:label "Metadata profile default" ;
+  dwec:primaryStatusClass :ApprovalStatus ;
+.
+
+# A deceptively important declaration, setting `dwec:metadataProfile` enables everything we've done so far.
+
+[ dwec:metadataProfile :MetadataProfileDefault ] .
+
+
+# ---
+
+
+# You can [download and load](demo.ttl) this file into an org's `ddw-catalogs` dataset to get this started.
+
+# If you copy and paste any examples, be hyper-conscious of prefixes. It's best to use the `:` default prefix to make this code more portable viz-a-viz copy & paste.
+
+
+# ---
+
+# # More advanced topics
+
+# ---
+
+# ### Lineage
+
+# We can display lineage between resources that we've catalogged, including tables, terms, and analysis resources
+
+# ![example_lineage](https://p195.p4.n0.cdn.getcloudapp.com/items/wbu6oK6m/fe647a7c-fd6d-4210-8a4e-c057cafe1357.jpg?v=bf7e8973140ac9be50dcea1a1b233c9c "Example of lineage between tables and dashboards")
+
+# We'll start off by bulk loading a second table that we'll call `AID_SOURCE`, to use as a source of the table we created previously, `AID_STATUS`.
+
+:DatabaseTable-NIGHTOWL_DB.AID_SOURCE
+        a                 dwec:DatabaseTable ;
+        dct:description   "Source data of different aid drops and deliveries." ;
+        dct:identifier    "AID_SOURCE" ;
+        dct:isPartOf      :Database-NIGHTOWL_DB;
+.
+
+# This table has 1 `dwec:DatabaseColumns`
+
+:DatabaseColumn-NIGHTOWL_DB.AID_SOURCE.OrderSourceID
+        a                    dwec:DatabaseColumn ;
+        dct:identifier       "Aid.OrderSourceID" ;
+        dct:isPartOf         :DatabaseTable-NIGHTOWL_DB.AID_SOURCE ;
+        csvw:name            "Aid.OrderSourceID" ;
+        dwec:columnIndex     "1"^^xsd:int ;
+        dwec:columnSize      "10"^^xsd:int ;
+        dwec:columnTypeName  "NUMBER" ;
+        dwec:jdbcType        dwec-jdbc:BIGINT .
+
+# Now that we have 2 tables, `AID_SOURCE` and `AID_STATUS`, we can declare their provenance relationship for lineage with `prov:wasDerivedFrom` like so:
+
+:DatabaseTable-NIGHTOWL_DB.AID_STATUS prov:wasDerivedFrom :DatabaseTable-NIGHTOWL_DB.AID_SOURCE .
+
+# And we can say that our dashboard is derived from the `AID_STATUS` table with the same `prov:wasDerivedFrom`:
+
+:TableauDashboard-HatianAidTracking prov:wasDerivedFrom :DatabaseTable-NIGHTOWL_DB.AID_STATUS .
+
+# You can read more about `prov:wasDerivedFrom` and the PROV-O ontology here: https://www.w3.org/TR/2013/REC-prov-o-20130430/#wasDerivedFrom
+
+# *Lineage isn't enabled by default for all customers. Customer Success can help enable it.*
+
+
+# ### Markdown fields
+
+# We automatically render all values through a basic Markdown renderer, but we'll remove images, newlines, and other "block level" elements unless you've declared the `dwec:MetadataPresentation` as `dwec:Multiline`, which retains all those elements.
+
+# As a reference, we support all of the markup referenced here: https://docs.data.world/tutorials/markdown/
+
+# Our "Formula" field we added to a `:Metric` is `dwec:Multiline`, so we'll use that as an example.
+
+# ![markdown embed example](https://p195.p4.n0.cdn.getcloudapp.com/items/DOuqXDyn/217d4d5f-8dc3-41b9-bf23-d9bfd60a62f2.jpg?v=41e57e6dfe8e384de3984216e47a7a79 "Example of markdown embeds")
+
+:Term-CustomerLifetimeValue :formula '''
+  #### Image example
+
+  #![https://p195.p4.n0.cdn.getcloudapp.com/items/P8u9x56X/b6b5bbe2-32bc-49a7-9b57-cb6aab880dd7.jpg?v=abbc16f4b64feb7d3630e81f7cc92e9a]
+
+  #### Embed example (works for any data.world URL or platform that supports OEmbed)
+
+  @(https://data.world/markmarkoh/exploring-thor/insights/3ce2560b-f866-49fd-b672-041680bc1f14)
+
+  ### Markdown tables
+
+  | table | example | test |
+  |-------|---------|------|
+  | alpha | beta    | zeta |
+''' .
+
+# ### DataTypes
+
+# Modeled off of [csvw:Datatype](https://www.w3.org/ns/csvw#class-definitions), a DataType allows you to classify a column type.
+
+# For instance, the base column type for a column of social security number's may be a VARCHAR, but you may want to apply semantic meaning to that column to be a shared "SSN" datatype, especially if it appears in several places and you want to share documentation.
+
+# ![data type on a column](https://p195.p4.n0.cdn.getcloudapp.com/items/yAurlPnZ/3ffbf370-06f9-4b01-87c8-8273d8b3ae9e.jpg?v=ff7f733dc5ce25474b55bf2dfa6808d6 "The column page is automatically updated with shared context from the delcared datatype")
+# ![data type on a column](https://p195.p4.n0.cdn.getcloudapp.com/items/yAurlPnn/0fe41916-ea91-4cce-a327-6daea6b591c9.jpg?v=749969340594dbbd6d5b4eadc5da845e "The datatype page collects all known columns that match this type")
+
+# To build a DataType, we'll use `csvw:DataType`
+
+:Datatype-ProductOrderId
+  a csvw:Datatype ;
+  dct:identifier  "ProductOrderId" ;
+  dct:title "Product Order ID" ;
+  dct:description "A product order ID is a 16 character identifier that represents a product order" ;
+  csvw:base xsd:string ;
+.
+
+# To apply this `csvw:Datatype` to a `dwec:DatabaseColumn`, we use `csvw:datatype`
+
+:DatabaseColumn-NIGHTOWL_DB.AID_SOURCE.OrderSourceID csvw:datatype :Datatype-ProductOrderId .
+:DatabaseColumn-NIGHTOWL_DB.AID_STATUS.OrderStatusID csvw:datatype :Datatype-ProductOrderId .
+
+# *Note: Currently datatypes can only be sent by bulk loading. We don't yet support setting these types to columns in the user interface.*
