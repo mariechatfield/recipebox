@@ -1,0 +1,195 @@
+# ### Prefix Declarations
+
+@prefix :  <https://recipebox.linked.data.world/d/ddw-catalogs/> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix label: <http://purl.org/net/vocab/2004/03/label#> .
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
+@prefix dwec-database: <https://dwec.data.world/v0/database-types/> .
+@prefix dwec-jdbc: <https://dwec.data.world/v0/jdbc-types/> .
+@prefix dwec:  <https://dwec.data.world/v0/> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix database-types:  <https://dwec.data.world/v0/database-types/> .
+@prefix jdbc-types:  <https://dwec.data.world/v0/jdbc-types/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix csvw:   <http://www.w3.org/ns/csvw#>.
+@prefix dcat:   <http://www.w3.org/ns/dcat#>.
+
+# ## Metadata Sections
+
+# *These sections are static. You can't define custom sections at this time..*
+
+# The Informational Metadata section appears near the top of the page, under the title and description.
+# Values presented here should be applicable to the most amount of users of the catalog, both technical and non-technical.
+
+:MetadataSectionInformational
+  rdf:type dwec:MetadataSection ;
+  rdfs:label "Informational Metadata" ;
+  dwec:inMetadataProfile :MetadataProfileDefault ;
+.
+
+# Technical Metadata is rendered towards the bottom of the page. The audience for these values tends to be technical in nature, like server names and calculations.
+
+:MetadataSectionTechnical
+  rdf:type dwec:MetadataSection ;
+  rdfs:label "Technical Metadata" ;
+  dwec:inMetadataProfile :MetadataProfileDefault ;
+.
+
+# People metadata will show up in the sidebar. Fields like "Data Owner", "Subject Matter Expert", "Owner", etc, can be placed here.
+
+:MetadataSectionPeople
+  rdf:type dwec:MetadataSection ;
+  rdfs:label "People Metadata" ;
+  dwec:inMetadataProfile :MetadataProfileDefault ;
+.
+
+# Additional Sidebar Metadata section, renders underneath the People Metadata section.
+
+:MetadataSectionSidebar
+  rdf:type dwec:MetadataSection ;
+  rdfs:label "Sidebar Metadata" ;
+  dwec:inMetadataProfile :MetadataProfileDefault ;
+.
+
+# Quality Metadata section is currently a placeholder.
+
+:MetadataSectionQuality
+  rdf:type dwec:MetadataSection ;
+  rdfs:label "Quality Metadata" ;
+  dwec:inMetadataProfile :MetadataProfileDefault ;
+.
+
+# Source Metadata is currently only used to override the primary button on datasets  
+# *Using this section is rare*
+
+:MetadataSectionSource
+  rdf:type dwec:MetadataSection ;
+  rdfs:label "Source Metadata" ;
+  dwec:inMetadataProfile :MetadataProfileDefault ;
+.
+
+#  
+
+:MetadataProfileDefault
+  rdf:type dwec:MetadataProfile ;
+  rdfs:label "Metadata profile default" ;
+  dwec:primaryStatusClass :ApprovalStatus ;
+.
+
+# ### Asset Statuses
+
+# Asset Statuses can be applied to resources and render through the app, like in search and when browsing the metadata catalog.
+
+:RecipeStatus
+  rdf:type rdfs:Class ;
+  rdfs:label "Approval status" ;
+  rdfs:subClassOf dwec:AssetStatus ;
+  dwec:inMetadataProfile :MetadataProfileDefault ;
+.
+
+# An asset status with a "positive" disposition will render green.
+
+:RecipeStatusSuccessful
+  rdf:type :RecipeStatus ;
+  rdfs:label "Successful recipe" ;
+  dwec:hasDisposition :DispositionPositive ;
+.
+
+# An asset status with a "negative" disposition will render red, such as "Warning", "Rejected", or "Deprecated"
+
+:RecipeStatusFailed
+  rdf:type :RecipeStatus ;
+  rdfs:label "Failed recipe" ;
+  dwec:hasDisposition :DispositionNegative ;
+.
+
+# An asset status with a "neutral" disposition will render grey:
+
+:RecipeStatusPending
+  rdf:type :RecipeStatus ;
+  rdfs:label "Pending attempt" ;
+  dwec:hasDisposition :DispositionNeutral ;
+.
+
+# data.world currently accepts these dispositions: Positive, Neutral, and Negative
+
+:DispositionNegative
+  rdf:type dwec:Disposition ;
+  rdfs:label "Negative" ;
+.
+:DispositionNeutral
+  rdf:type dwec:Disposition ;
+  rdfs:label "Neutral" ;
+.
+:DispositionPositive
+  rdf:type dwec:Disposition ;
+  rdfs:label "Positive" ;
+.
+
+# ### Metadata Presentations
+
+# ### Relationship Presentations
+
+# Our catalog ships with some default relationships between metadata resources out of the box.
+
+# If you don't see an existing default relationship between the resource classes, you will need to create a custom relationship.
+
+# `dwec:RelationshipPresentations` allow you to add on to those existing built-in relationships.
+
+:RelationshipSection
+  rdf:type                dwec:RelationshipSection ;
+  rdfs:label              "Relationship Section" ;
+  dwec:inMetadataProfile  :MetadataProfileDefault ;
+.
+
+# #### Generic resource classes
+
+:Recipe a owl:Class ;
+  rdfs:label "Recipe" ;
+  label:plural "Recipes" ;
+.
+
+# ### Defining dwec:Catalogs
+
+# A dwec:Catalog is a collection of resources, which can be configured to be by physical resource, like a Snowflake database, or logically, like the Marketing Department's data
+# Each resource on our platform requires a `dct:identifier`.
+# `dct:title` is used in our platform. Keep it succinct, users will identify the collection based on this title.
+# `dcat:records` are a list of dwec:CatalogRecords that belong to this catalog.  
+# A single `dwec:CatalogRecord` can belong to more than 1 `dwec:Catalog`
+
+:Catalog-Entrees
+  a               dwec:Catalog ;
+  dct:identifier  "Entrees" ;
+  dct:title       "Entrees" ;
+  dct:description "A collection of recipes that are best served as a main meal." ;
+  dct:issued      "2020-02-17T21:41:17.675Z"^^xsd:dateTime ;
+  dct:modified    "2020-02-17T21:41:17.675Z"^^xsd:dateTime ;
+.
+
+# # Wrapping it all up
+
+# We'll define a `owl:Ontology` (*this is largely copy and paste*)
+
+:
+  rdf:type owl:Ontology ;
+  rdfs:label "Recipebox Metadata Profile" ;
+  owl:imports dwec: ;
+  owl:imports database-types: ;
+  owl:imports jdbc-types: ;
+.
+
+# We declare a default metadata profile and set the `:RecipeStatus` via `dwec:primaryStatusClass`
+
+:MetadataProfileDefault
+  rdf:type dwec:MetadataProfile ;
+  rdfs:label "Metadata profile default" ;
+  dwec:primaryStatusClass :RecipeStatus ;
+.
+
+# A deceptively important declaration, setting `dwec:metadataProfile` enables everything we've done so far.
+
+[ dwec:metadataProfile :MetadataProfileDefault ] .
