@@ -378,6 +378,14 @@
   skos:broader        :protein_sources_plant_based;
 .
 
+:protein_sources_soy  rdf:type  skos:Concept ;
+  skos:inScheme       :protein_sources ;
+  skos:prefLabel      "Soy" ;
+  skos:altLabel       "Soy" ;
+  dct:identifier      "Soy" ;
+  skos:broader        :protein_sources_plant_based;
+.
+
 :protein_sources_vegan_meat  rdf:type  skos:Concept ;
   skos:inScheme       :protein_sources ;
   skos:prefLabel      "Vegan Meat" ;
