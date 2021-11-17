@@ -18,6 +18,31 @@
 @prefix csvw:   <http://www.w3.org/ns/csvw#>.
 @prefix dcat:   <http://www.w3.org/ns/dcat#>.
 
+# #### Generic resource classes
+
+:Recipe a owl:Class ;
+  rdfs:label "Recipe" ;
+  label:plural "Recipes" ;
+.
+
+:RecipeEntree a owl:Class ;
+  rdfs:subClassOf :Recipe ;
+  rdfs:label "Entree" ;
+  label:plural "Entrees" ;
+.
+
+:RecipeBread a owl:Class ;
+  rdfs:subClassOf :Recipe ;
+  rdfs:label "Bread" ;
+  label:plural "Breads" ;
+.
+
+:RecipeDessert a owl:Class ;
+  rdfs:subClassOf :Recipe ;
+  rdfs:label "Dessert" ;
+  label:plural "Desserts" ;
+.
+
 # ## Metadata Sections
 
 # *These sections are static. You can't define custom sections at this time..*
@@ -132,6 +157,319 @@
 
 # ### Metadata Presentations
 
+
+# #### MetadataSectionPeople
+
+:MetadataPresentation-Recipe-SourceURL
+  rdf:type                dwec:MetadataPresentation ;
+  rdfs:label              "Source" ;
+  dwec:inMetadataSection  :MetadataSectionPeople ;
+  dwec:forType            :Recipe ;
+  dwec:viaProperty        :source_url ;
+.
+
+# #### MetadataSectionSidebar
+
+:MetadataPresentation-Recipe-Rating
+  rdf:type                dwec:MetadataPresentation ;
+  rdfs:label              "Rating" ;
+  dwec:inMetadataSection  :MetadataSectionSidebar ;
+  dwec:forType            :Recipe ;
+  dwec:viaProperty        :rating ;
+  rdf:type                dwec:Facetable ;
+.
+
+:MetadataPresentation-Recipe-PrepTime
+  rdf:type                dwec:MetadataPresentation ;
+  rdfs:label              "Prep time" ;
+  dwec:inMetadataSection  :MetadataSectionSidebar ;
+  dwec:forType            :Recipe ;
+  dwec:viaProperty        :prep_time ;
+.
+
+:MetadataPresentation-Recipe-CookTime
+  rdf:type                dwec:MetadataPresentation ;
+  rdfs:label              "Cook time" ;
+  dwec:inMetadataSection  :MetadataSectionSidebar ;
+  dwec:forType            :Recipe ;
+  dwec:viaProperty        :cook_time ;
+.
+
+:MetadataPresentation-Recipe-TotalTime
+  rdf:type                dwec:MetadataPresentation ;
+  rdfs:label              "Total time" ;
+  dwec:inMetadataSection  :MetadataSectionSidebar ;
+  dwec:forType            :Recipe ;
+  dwec:viaProperty        :total_time ;
+.
+
+:MetadataPresentation-Recipe-Servings
+  rdf:type                dwec:MetadataPresentation ;
+  rdfs:label              "Servings" ;
+  dwec:inMetadataSection  :MetadataSectionSidebar ;
+  dwec:forType            :Recipe ;
+  dwec:viaProperty        :servings ;
+.
+
+# Dietary preferences (multiple select)
+
+:MetadataPresentation-DietaryPreferences
+  rdf:type                dwec:MetadataPresentation ;
+  rdf:type                dwec:Facetable ;
+  rdfs:label              "Dietary Preferences" ;
+  dwec:forType            :Recipe ;
+  dwec:inMetadataSection  :MetadataSectionSidebar ;
+  dwec:viaProperty        :dietary_preferences ;
+  rdf:type                dwec:Multivalued ;
+.
+
+:dietary_preferences
+  rdfs:range            skos:ConceptScheme ;
+  dwec:inConceptScheme  :dietary ;
+.
+
+:dietary  rdf:type  skos:ConceptScheme .
+
+:dietary_gluten_free  rdf:type  skos:Concept ;
+  skos:inScheme       :dietary ;
+  skos:prefLabel      "Gluten Free" ;
+  skos:altLabel       "Gluten Free" ;
+  dct:identifier      "Gluten Free" ;
+.
+
+:dietary_vegetarian   rdf:type  skos:Concept ;
+  skos:inScheme       :dietary ;
+  skos:prefLabel      "Vegetarian" ;
+  skos:altLabel       "Vegetarian" ;
+  dct:identifier      "Vegetarian" ;
+.
+
+:dietary_vegan  rdf:type  skos:Concept ;
+  skos:inScheme       :dietary ;
+  skos:prefLabel      "Vegan" ;
+  skos:altLabel       "Vegan" ;
+  dct:identifier      "Vegan" ;
+.
+
+# Difficulty (single select)
+
+:MetadataPresentation-Difficulty
+  rdf:type                    dwec:MetadataPresentation ;
+  rdf:type                    dwec:Facetable ;
+  rdfs:label                  "Difficulty" ;
+  dwec:forType                :Recipe ;
+  dwec:inMetadataSection      :MetadataSectionSidebar ;
+  dwec:viaProperty            :difficulty ;
+.
+
+:difficulty
+  rdfs:range            skos:ConceptScheme ;
+  dwec:inConceptScheme  :difficulty_levels ;
+.
+
+:difficulty_levels       rdf:type  skos:ConceptScheme .
+
+:difficulty_levels_easy  rdf:type  skos:Concept ;
+  skos:inScheme       :difficulty_levels ;
+  skos:prefLabel      "Hangry Monday 5pm" ;
+  skos:altLabel       "Hangry Monday 5pm" ;
+  dct:identifier      "Hangry Monday 5pm" ;
+.
+
+:difficulty_levels_medium  rdf:type  skos:Concept ;
+  skos:inScheme       :difficulty_levels ;
+  skos:prefLabel      "Relaxed Wednesday" ;
+  skos:altLabel       "Relaxed Wednesday" ;
+  dct:identifier      "Relaxed Wednesday" ;
+.
+
+:difficulty_levels_hard  rdf:type  skos:Concept ;
+  skos:inScheme       :difficulty_levels ;
+  skos:prefLabel      "Sunday Afternoon" ;
+  skos:altLabel       "Sunday Afternoon" ;
+  dct:identifier      "Sunday Afternoon" ;
+.
+
+:difficulty_levels_complex  rdf:type  skos:Concept ;
+  skos:inScheme       :difficulty_levels ;
+  skos:prefLabel      "Weekend Project" ;
+  skos:altLabel       "Weekend Project" ;
+  dct:identifier      "Weekend Project" ;
+.
+
+# Entree protein sources (multiple select)
+
+:MetadataPresentation-Protein
+  rdf:type                dwec:MetadataPresentation ;
+  rdf:type                dwec:Facetable ;
+  rdfs:label              "Protein Source" ;
+  dwec:forType            :RecipeEntree ;
+  dwec:inMetadataSection  :MetadataSectionSidebar ;
+  dwec:viaProperty        :protein ;
+  rdf:type                dwec:Multivalued ;
+.
+
+:protein
+  rdfs:range            skos:ConceptScheme ;
+  dwec:inConceptScheme  :protein_sources ;
+.
+
+:protein_sources  rdf:type  skos:ConceptScheme .
+
+:protein_sources_animal_based  rdf:type  skos:Concept ;
+  skos:inScheme       :protein_sources ;
+  skos:prefLabel      "Animal Based" ;
+  skos:altLabel       "Animal Based" ;
+  dct:identifier      "Animal Based" ;
+.
+
+:protein_sources_beef  rdf:type  skos:Concept ;
+  skos:inScheme       :protein_sources ;
+  skos:prefLabel      "Beef" ;
+  skos:altLabel       "Beef" ;
+  dct:identifier      "Beef" ;
+  skos:broader        :protein_sources_animal_based;
+.
+
+:protein_sources_chicken  rdf:type  skos:Concept ;
+  skos:inScheme       :protein_sources ;
+  skos:prefLabel      "Chicken" ;
+  skos:altLabel       "Chicken" ;
+  dct:identifier      "Chicken" ;
+  skos:broader        :protein_sources_animal_based;
+.
+
+:protein_sources_fish  rdf:type  skos:Concept ;
+  skos:inScheme       :protein_sources ;
+  skos:prefLabel      "Fish" ;
+  skos:altLabel       "Fish" ;
+  dct:identifier      "Fish" ;
+  skos:broader        :protein_sources_animal_based;
+.
+
+:protein_sources_pork  rdf:type  skos:Concept ;
+  skos:inScheme       :protein_sources ;
+  skos:prefLabel      "Pork" ;
+  skos:altLabel       "Pork" ;
+  dct:identifier      "Pork" ;
+  skos:broader        :protein_sources_animal_based;
+.
+
+:protein_sources_turkey  rdf:type  skos:Concept ;
+  skos:inScheme       :protein_sources ;
+  skos:prefLabel      "Turkey" ;
+  skos:altLabel       "Turkey" ;
+  dct:identifier      "Turkey" ;
+  skos:broader        :protein_sources_animal_based;
+.
+
+:protein_sources_plant_based  rdf:type  skos:Concept ;
+  skos:inScheme       :protein_sources ;
+  skos:prefLabel      "Plant Based" ;
+  skos:altLabel       "Plant Based" ;
+  dct:identifier      "Plant Based" ;
+.
+
+:protein_sources_legumes  rdf:type  skos:Concept ;
+  skos:inScheme       :protein_sources ;
+  skos:prefLabel      "Legumes" ;
+  skos:altLabel       "Legumes" ;
+  dct:identifier      "Legumes" ;
+  skos:broader        :protein_sources_plant_based;
+.
+
+:protein_sources_vegan_meat  rdf:type  skos:Concept ;
+  skos:inScheme       :protein_sources ;
+  skos:prefLabel      "Vegan Meat" ;
+  skos:altLabel       "Vegan Meat" ;
+  dct:identifier      "Vegan Meat" ;
+  skos:broader        :protein_sources_plant_based;
+.
+
+# Bread leavening types (single select)
+
+:MetadataPresentation-Leavening
+  rdf:type                    dwec:MetadataPresentation ;
+  rdf:type                    dwec:Facetable ;
+  rdfs:label                  "Leavening" ;
+  dwec:forType                :RecipeBread ;
+  dwec:inMetadataSection      :MetadataSectionSidebar ;
+  dwec:viaProperty            :leavening ;
+.
+
+:leavening
+  rdfs:range            skos:ConceptScheme ;
+  dwec:inConceptScheme  :leavening_types ;
+.
+
+:leavening_types       rdf:type  skos:ConceptScheme .
+
+:leavening_types_quick  rdf:type  skos:Concept ;
+  skos:inScheme       :leavening_types ;
+  skos:prefLabel      "Quick bread" ;
+  skos:altLabel       "Quick bread" ;
+  dct:identifier      "Quick bread" ;
+.
+
+:leavening_types_commercial_yeast  rdf:type  skos:Concept ;
+  skos:inScheme       :leavening_types ;
+  skos:prefLabel      "Commercial yeast" ;
+  skos:altLabel       "Commercial yeast" ;
+  dct:identifier      "Commercial yeast" ;
+.
+
+:leavening_types_sourdough  rdf:type  skos:Concept ;
+  skos:inScheme       :leavening_types ;
+  skos:prefLabel      "Sourdough" ;
+  skos:altLabel       "Sourdough" ;
+  dct:identifier      "Sourdough" ;
+.
+
+# #### MetadataSectionInformational
+
+:MetadataPresentation-Recipe-ImageBase64Encoded
+  rdf:type                    dwec:MetadataPresentation ;
+  rdfs:label                  "Image Preview" ;
+  dwec:editHint               "Base64 encoded image to display at top of recipe" ;
+  dwec:inMetadataSection      :MetadataSectionInformational ;
+  dwec:forType                :Recipe ;
+  dwec:viaProperty            :image_base64 ;
+  rdf:type                    dwec:Multiline ;
+  dwec:presentationSortOrder  1 ;
+  dwec:presentationTemplate   "![](data:image/png;base64,{{$1}})" ;
+.
+
+:MetadataPresentation-Recipe-Ingredients
+  rdf:type                    dwec:MetadataPresentation ;
+  rdfs:label                  "Ingredients" ;
+  dwec:inMetadataSection      :MetadataSectionInformational ;
+  dwec:forType                :Recipe ;
+  dwec:viaProperty            :ingredients ;
+  rdf:type                    dwec:Multiline ;
+  dwec:presentationSortOrder  2 ;
+.
+
+:MetadataPresentation-Recipe-Directions
+  rdf:type                    dwec:MetadataPresentation ;
+  rdfs:label                  "Directions" ;
+  dwec:inMetadataSection      :MetadataSectionInformational ;
+  dwec:forType                :Recipe ;
+  dwec:viaProperty            :directions ;
+  rdf:type                    dwec:Multiline ;
+  dwec:presentationSortOrder  3 ;
+.
+
+
+:MetadataPresentation-Recipe-Notes
+  rdf:type                    dwec:MetadataPresentation ;
+  rdfs:label                  "Notes" ;
+  dwec:inMetadataSection      :MetadataSectionInformational ;
+  dwec:forType                :Recipe ;
+  dwec:viaProperty            :notes ;
+  rdf:type                    dwec:Multiline ;
+  dwec:presentationSortOrder  4 ;
+.
+
 # ### Relationship Presentations
 
 # Our catalog ships with some default relationships between metadata resources out of the box.
@@ -146,13 +484,6 @@
   dwec:inMetadataProfile  :MetadataProfileDefault ;
 .
 
-# #### Generic resource classes
-
-:Recipe a owl:Class ;
-  rdfs:label "Recipe" ;
-  label:plural "Recipes" ;
-.
-
 # ### Defining dwec:Catalogs
 
 # A dwec:Catalog is a collection of resources, which can be configured to be by physical resource, like a Snowflake database, or logically, like the Marketing Department's data
@@ -161,11 +492,11 @@
 # `dcat:records` are a list of dwec:CatalogRecords that belong to this catalog.  
 # A single `dwec:CatalogRecord` can belong to more than 1 `dwec:Catalog`
 
-:Catalog-Entrees
+:Catalog-Favorites
   a               dwec:Catalog ;
-  dct:identifier  "Entrees" ;
-  dct:title       "Entrees" ;
-  dct:description "A collection of recipes that are best served as a main meal." ;
+  dct:identifier  "Favorite Recipes" ;
+  dct:title       "Favorite Recipes" ;
+  dct:description "Marie's favorite recipes." ;
   dct:issued      "2020-02-17T21:41:17.675Z"^^xsd:dateTime ;
   dct:modified    "2020-02-17T21:41:17.675Z"^^xsd:dateTime ;
 .
