@@ -1,0 +1,89 @@
+#!/usr/bin/env node
+const fs = require("fs");
+
+const TAB = 4
+
+function triple(predicate, object) {
+  if (!object) {
+    return null
+  }
+
+  return { predicate, object }
+}
+
+function spaces(num) {
+  return new Array(num + 1).join(' ')
+}
+
+function formatTriples(triples) {
+  const longestPredicate = Math.max(...triples.map(t => t.predicate.length))
+  const totalPadding = longestPredicate % 2 === 0 ? longestPredicate + TAB : longestPredicate + TAB + 1
+
+  return triples.map(({ predicate, object }) => {
+    const justify = totalPadding - predicate.length
+    return `${spaces(TAB)}${predicate}${spaces(justify)}${object};`
+  }).join('\n')
+}
+
+function buildStatement(subject, triples) {
+  const validTriples = triples.filter(t => !!t)
+
+  return `
+${subject}
+${formatTriples(validTriples)}
+.`
+}
+
+function generateTTLForRecipe(filename) {
+  const recipeFile = JSON.parse(fs.readFileSync(filename, { encoding: 'utf-8' }));
+  
+  const {
+    created,
+    cook_time,
+    description,
+    directions,
+    ingredients,
+    name,
+    notes,
+    photo_data,
+    prep_time,
+    rating,
+    servings,
+    source_url,
+    source,
+    total_time,
+    uid
+  } = recipeFile;
+
+  const statement = buildStatement(`:Recipe-${uid}`, [
+    triple('rdf:type', ':Recipe'),
+    triple('dct:identifier', uid),
+    triple('dct:title', name),
+    triple('dwc:description', description),
+    triple(':ingredients', ingredients),
+    triple(':directions', directions),
+    triple(':rating', rating),
+    triple(':servings', servings),
+    triple(':prep_time', prep_time),
+    triple(':cook_time', cook_time),
+    triple(':total_time', total_time),
+    triple(':source_url', source_url),
+    triple(':notes', notes),
+    triple(':image_base64', photo_data)
+  ])
+
+  const catalogRecord = buildStatement(`:CatalogRecord-${uid}`, [
+    triple('rdf:type', 'dcat:CatalogRecord'),
+
+    // format these
+    triple('dct:issued', created),
+    triple('dct:modified', created),
+    triple('foaf:primaryTopic', `:Recipe-${uid}`)
+  ])
+
+
+  console.log(statement)
+  console.log(catalogRecord)
+}
+
+generateTTLForRecipe('recipes/Classic_Lasagna.json')
