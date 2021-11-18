@@ -3,6 +3,52 @@ const fs = require("fs");
 
 const TAB = 4
 
+const PREFIXES = `# Prefix Declarations
+
+@prefix :  <https://recipebox.linked.data.world/d/ddw-catalogs/> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix label: <http://purl.org/net/vocab/2004/03/label#> .
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
+@prefix dwec-database: <https://dwec.data.world/v0/database-types/> .
+@prefix dwec-jdbc: <https://dwec.data.world/v0/jdbc-types/> .
+@prefix dwec:  <https://dwec.data.world/v0/> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix database-types:  <https://dwec.data.world/v0/database-types/> .
+@prefix jdbc-types:  <https://dwec.data.world/v0/jdbc-types/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix csvw:   <http://www.w3.org/ns/csvw#>.
+@prefix dcat:   <http://www.w3.org/ns/dcat#>.
+`;
+
+const RESERVED_TAGS = {
+  CLASS_BREAD: "Bread",
+  CLASS_DESSERT: "Dessert",
+  CLASS_ENTREE: "Entree",
+  DIETARY_GLUTEN_FREE: "Gluten Free",
+  DIETARY_VEGAN: "Vegan",
+  DIETARY_VEGETARIAN: "Vegetarian",
+  DIFFICULTY_EASY: "Hangry Monday 5pm",
+  DIFFICULTY_HARD: "Sunday Afternoon",
+  DIFFICULTY_MEDIUM: "Relaxed Wednesday",
+  LEAVENING_QUICK: "Quick",
+  LEAVENING_YEAST: "Yeast",
+  PROTEIN_BEEF: "Beef",
+  PROTEIN_CHEESE: "Cheese",
+  PROTEIN_CHICKEN: "Chicken",
+  PROTEIN_FISH: "Fish",
+  PROTEIN_PORK: "Pork",
+  PROTEIN_LEGUMES: "Legumes",
+  PROTEIN_TURKEY: "Turkey",
+  PROTEIN_VEGAN_MEAT: "Vegan Meat",
+  STATUS_PENDING: "{ Untested }",
+}
+
+const IGNORED_TAGS = ["Marie", "Luis", "Favorite", "Oven", "Stove", "Sheet Pan"]
+
 function triple(predicate, object) {
   if (!object) {
     return null
@@ -34,10 +80,123 @@ ${formatTriples(validTriples)}
 .`
 }
 
-function generateTTLForRecipe(filename) {
+function parseCategories(categories) {
+  const dietaryPreferences = []
+  const protein = [];
+  const tags = []
+  let difficulty;
+  let leavening;
+  let status = ':RecipeStatusSuccessful';
+  let subclass = ':Recipe';
+
+  categories.forEach(category => {
+    switch(category) {
+      case RESERVED_TAGS.CLASS_BREAD: {
+        subclass = ':RecipeBread';
+        return;
+      }
+      case RESERVED_TAGS.CLASS_DESSERT: {
+        subclass = ':RecipeDessert';
+        return;
+      }
+      case RESERVED_TAGS.CLASS_ENTREE: {
+        subclass = ':RecipeEntree';
+        return;
+      }
+      case RESERVED_TAGS.DIETARY_GLUTEN_FREE: {
+        dietaryPreferences.push(':dietary_gluten_free');
+        return;
+      }
+      case RESERVED_TAGS.DIETARY_VEGAN: {
+        dietaryPreferences.push(':dietary_vegan');
+        return;
+      }
+      case RESERVED_TAGS.DIETARY_VEGETARIAN: {
+        dietaryPreferences.push(':dietary_vegetarian');
+        return;
+      }
+      case RESERVED_TAGS.DIFFICULTY_EASY: {
+        difficulty = ':difficulty_levels_easy';
+        return;
+      }
+      case RESERVED_TAGS.DIFFICULTY_HARD: {
+        difficulty = ':difficulty_levels_hard';
+        return;
+      }
+      case RESERVED_TAGS.DIFFICULTY_MEDIUM: {
+        difficulty = ':difficulty_levels_medium';
+        return;
+      }
+      case RESERVED_TAGS.LEAVENING_QUICK: {
+        leavening = ':leavening_types_quick';
+        return
+      }
+      case RESERVED_TAGS.LEAVENING_YEAST: {
+        leavening = ':leavening_types_commercial_yeast';
+        return
+      }
+      case RESERVED_TAGS.PROTEIN_BEEF: {
+        protein.push(':protein_sources_beef');
+        return
+      }
+      case RESERVED_TAGS.PROTEIN_CHEESE: {
+        protein.push(':protein_sources_cheese');
+        return
+      }
+      case RESERVED_TAGS.PROTEIN_CHICKEN: {
+        protein.push(':protein_sources_chicken');
+        return
+      }
+      case RESERVED_TAGS.PROTEIN_FISH: {
+        protein.push(':protein_sources_fish');
+        return
+      }
+      case RESERVED_TAGS.PROTEIN_PORK: {
+        protein.push(':protein_sources_pork');
+        return
+      }
+      case RESERVED_TAGS.PROTEIN_LEGUMES: {
+        protein.push(':protein_sources_legumes');
+        return
+      }
+      case RESERVED_TAGS.PROTEIN_TURKEY: {
+        protein.push(':protein_sources_turkey');
+        return
+      }
+      case RESERVED_TAGS.PROTEIN_VEGAN_MEAT: {
+        protein.push(':protein_sources_vegan_meat');
+        return
+      }
+      case RESERVED_TAGS.STATUS_PENDING: {
+        status = ':RecipeStatusPending';
+        return;
+      }
+      default: {
+        if (IGNORED_TAGS.includes(category)) {
+          return
+        }
+
+        tags.push(category)
+      }
+    }
+  })
+
+  return {
+    dietaryPreferences,
+    difficulty,
+    leavening,
+    protein,
+    subclass,
+    status,
+    tags
+  }
+}
+
+function generateTTLForRecipe(filename, index = null) {
   const recipeFile = JSON.parse(fs.readFileSync(filename, { encoding: 'utf-8' }));
   
   const {
+    categories,
     created,
     cook_time,
     description,
@@ -55,35 +214,80 @@ function generateTTLForRecipe(filename) {
     uid
   } = recipeFile;
 
-  const statement = buildStatement(`:Recipe-${uid}`, [
-    triple('rdf:type', ':Recipe'),
+  const {
+    dietaryPreferences,
+    difficulty,
+    leavening,
+    protein,
+    subclass,
+    status,
+    tags
+  } = parseCategories(categories)
+
+  const entryId = `${subclass}-${uid}`
+  const createdTimestamp = `"${new Date(created).toISOString()}"^^xsd:dateTime`
+  const formattedSource = `[${source}](${source_url})`
+
+  const statement = buildStatement(entryId, [
+    triple('rdf:type', subclass),
+    triple(':cook_time', cook_time),
+    triple(':difficulty', difficulty),
+    triple(':directions', directions),
+    // triple(':image_base64', photo_data),
+    triple(':ingredients', ingredients),
+    triple(':leavening', leavening),
+    triple(':notes', notes),
+    triple(':prep_time', prep_time),
+    triple(':rating', rating),
+    triple(':servings', servings),
+    triple(':source_url', formattedSource),
+    triple(':total_time', total_time),
     triple('dct:identifier', uid),
     triple('dct:title', name),
     triple('dwc:description', description),
-    triple(':ingredients', ingredients),
-    triple(':directions', directions),
-    triple(':rating', rating),
-    triple(':servings', servings),
-    triple(':prep_time', prep_time),
-    triple(':cook_time', cook_time),
-    triple(':total_time', total_time),
-    triple(':source_url', source_url),
-    triple(':notes', notes),
-    triple(':image_base64', photo_data)
+    triple('dwec:hasAssetStatus', status),
+    ...tags.map(tag => triple('dwec:textTag', tag)),
+    ...dietaryPreferences.map(preference => triple(':dietary_preferences', preference)),
+    ...protein.map(proteinSource => triple(':protein', proteinSource))
   ])
 
   const catalogRecord = buildStatement(`:CatalogRecord-${uid}`, [
     triple('rdf:type', 'dcat:CatalogRecord'),
-
-    // format these
-    triple('dct:issued', created),
-    triple('dct:modified', created),
-    triple('foaf:primaryTopic', `:Recipe-${uid}`)
+    triple('dct:issued', createdTimestamp),
+    triple('dct:modified', createdTimestamp),
+    triple('foaf:primaryTopic', entryId)
   ])
 
+  const commentPrefix = typeof index === 'number' ? `Recipe ${index + 1}. ` : ''
 
-  console.log(statement)
-  console.log(catalogRecord)
+  return `
+# --------------------------
+# ${commentPrefix}${name}
+#
+${statement}
+${catalogRecord}
+`;
 }
 
-generateTTLForRecipe('recipes/Classic_Lasagna.json')
+function generateTTLForAllRecipes(recipes) {
+  const recipeTTL = recipes.map(generateTTLForRecipe).join('\n')
+
+  return `${PREFIXES}\n${recipeTTL}`;
+}
+
+function updateFileForRecipes(recipes) {
+  fs.writeFileSync(
+    'catalog/recipes.ttl',
+    generateTTLForAllRecipes(recipes),
+    { encoding: 'utf-8' }
+  )
+
+  console.log('Updated!')
+}
+
+const recipes = [
+  'recipes/Coconut-Braised_Chickpeas_with_Sweet_Potatoes_and_Greens.json',
+  'recipes/Vermont_Whole_Wheat_Oatmeal_Honey_Bread.json'
+]
+
+updateFileForRecipes(recipes)

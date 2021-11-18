@@ -21,6 +21,7 @@
 # #### Generic resource classes
 
 :Recipe a owl:Class ;
+  a dwec:Facetable;
   rdfs:label "Recipe" ;
   label:plural "Recipes" ;
 .
