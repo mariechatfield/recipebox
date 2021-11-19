@@ -495,19 +495,22 @@
 
 # ### Defining dwec:Catalogs
 
-# A dwec:Catalog is a collection of resources, which can be configured to be by physical resource, like a Snowflake database, or logically, like the Marketing Department's data
-# Each resource on our platform requires a `dct:identifier`.
-# `dct:title` is used in our platform. Keep it succinct, users will identify the collection based on this title.
-# `dcat:records` are a list of dwec:CatalogRecords that belong to this catalog.  
-# A single `dwec:CatalogRecord` can belong to more than 1 `dwec:Catalog`
+:Catalog-AllRecipes
+  a               dwec:Catalog ;
+  dct:identifier  "All Recipes" ;
+  dct:title       "All Recipes" ;
+  dct:description "A collection of all recipes." ;
+  dct:issued      "2021-11-19T19:49:50.396Z"^^xsd:dateTime ;
+  dct:modified    "2021-11-19T19:49:50.396Z"^^xsd:dateTime ;
+.
 
 :Catalog-Favorites
   a               dwec:Catalog ;
   dct:identifier  "Favorite Recipes" ;
   dct:title       "Favorite Recipes" ;
   dct:description "Marie's favorite recipes." ;
-  dct:issued      "2020-02-17T21:41:17.675Z"^^xsd:dateTime ;
-  dct:modified    "2020-02-17T21:41:17.675Z"^^xsd:dateTime ;
+  dct:issued      "2021-11-19T19:49:50.396Z"^^xsd:dateTime ;
+  dct:modified    "2021-11-19T19:49:50.396Z"^^xsd:dateTime ;
 .
 
 # # Wrapping it all up

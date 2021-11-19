@@ -34,6 +34,7 @@ const RESERVED_TAGS = {
   DIFFICULTY_EASY: "Hangry Monday 5pm",
   DIFFICULTY_HARD: "Sunday Afternoon",
   DIFFICULTY_MEDIUM: "Relaxed Wednesday",
+  FAVORITES_MARIE: "Marie",
   LEAVENING_QUICK: "Quick",
   LEAVENING_YEAST: "Yeast",
   PROTEIN_BEEF: "Beef",
@@ -47,18 +48,26 @@ const RESERVED_TAGS = {
   STATUS_PENDING: "{ Untested }",
 }
 
-const IGNORED_TAGS = ["Marie", "Luis", "Favorite", "Oven", "Stove", "Sheet Pan"]
+const IGNORED_TAGS = ["Luis", "Favorite", "Oven", "Stove", "Sheet Pan"]
 
-function triple(predicate, object) {
+function triple(predicate, object, { quoted } = { quoted: false }) {
   if (!object) {
     return null
+  }
+
+  if (quoted) {
+    const escapedString = object.toString()
+      .replace(/\n/g, '\\n')
+      .replace(/"/g, '\\"');
+
+    return { predicate, object: `"${escapedString}"` }
   }
 
   return { predicate, object }
 }
 
-function spaces(num) {
-  return new Array(num + 1).join(' ')
+function repeat(num, character = ' ') {
+  return new Array(num + 1).join(character)
 }
 
 function formatTriples(triples) {
@@ -67,11 +76,11 @@ function formatTriples(triples) {
 
   return triples.map(({ predicate, object }) => {
     const justify = totalPadding - predicate.length
-    return `${spaces(TAB)}${predicate}${spaces(justify)}${object};`
+    return `${repeat(TAB)}${predicate}${repeat(justify)}${object};`
   }).join('\n')
 }
 
-function buildStatement(subject, triples) {
+function buildStanza(subject, triples) {
   const validTriples = triples.filter(t => !!t)
 
   return `
@@ -81,9 +90,10 @@ ${formatTriples(validTriples)}
 }
 
 function parseCategories(categories) {
-  const dietaryPreferences = []
+  const catalogs = [":Catalog-AllRecipes"];
+  const dietaryPreferences = [];
   const protein = [];
-  const tags = []
+  const tags = [];
   let difficulty;
   let leavening;
   let status = ':RecipeStatusSuccessful';
@@ -125,6 +135,10 @@ function parseCategories(categories) {
       }
       case RESERVED_TAGS.DIFFICULTY_MEDIUM: {
         difficulty = ':difficulty_levels_medium';
+        return;
+      }
+      case RESERVED_TAGS.FAVORITES_MARIE: {
+        catalogs.push(':Catalog-Favorites');
         return;
       }
       case RESERVED_TAGS.LEAVENING_QUICK: {
@@ -182,6 +196,7 @@ function parseCategories(categories) {
   })
 
   return {
+    catalogs,
     dietaryPreferences,
     difficulty,
     leavening,
@@ -215,6 +230,7 @@ function generateTTLForRecipe(filename, index = null) {
   } = recipeFile;
 
   const {
+    catalogs,
     dietaryPreferences,
     difficulty,
     leavening,
@@ -225,54 +241,61 @@ function generateTTLForRecipe(filename, index = null) {
   } = parseCategories(categories)
 
   const entryId = `${subclass}-${uid}`
+  const catalogRecordId = `:CatalogRecord-${uid}`
   const createdTimestamp = `"${new Date(created).toISOString()}"^^xsd:dateTime`
   const formattedSource = `[${source}](${source_url})`
+  const ratingInStars = repeat(Number.parseInt(rating, 10), "★")
 
-  const statement = buildStatement(entryId, [
+  const statement = buildStanza(entryId, [
     triple('rdf:type', subclass),
-    triple(':cook_time', cook_time),
+    triple('dct:title', name, { quoted: true }),
+    triple('dwec:description', description, { quoted: true }),
+    triple(':cook_time', cook_time, { quoted: true }),
     triple(':difficulty', difficulty),
-    triple(':directions', directions),
-    // triple(':image_base64', photo_data),
-    triple(':ingredients', ingredients),
+    triple(':directions', directions, { quoted: true }),
+    triple(':image_base64', `"${photo_data}"^^xsd:anyURI`),
+    triple(':ingredients', ingredients, { quoted: true }),
     triple(':leavening', leavening),
-    triple(':notes', notes),
-    triple(':prep_time', prep_time),
-    triple(':rating', rating),
-    triple(':servings', servings),
-    triple(':source_url', formattedSource),
-    triple(':total_time', total_time),
-    triple('dct:identifier', uid),
-    triple('dct:title', name),
-    triple('dwc:description', description),
+    triple(':notes', notes, { quoted: true }),
+    triple(':prep_time', prep_time, { quoted: true }),
+    triple(':rating', ratingInStars, { quoted: true }),
+    triple(':servings', servings, { quoted: true }),
+    triple(':source_url', formattedSource, { quoted: true }),
+    triple(':total_time', total_time, { quoted: true }),
+    triple('dct:identifier', uid, { quoted: true }),
     triple('dwec:hasAssetStatus', status),
-    ...tags.map(tag => triple('dwec:textTag', tag)),
+    ...tags.map(tag => triple('dwec:textTag', tag, { quoted: true })),
     ...dietaryPreferences.map(preference => triple(':dietary_preferences', preference)),
     ...protein.map(proteinSource => triple(':protein', proteinSource))
   ])
 
-  const catalogRecord = buildStatement(`:CatalogRecord-${uid}`, [
+  const catalogRecord = buildStanza(catalogRecordId, [
     triple('rdf:type', 'dcat:CatalogRecord'),
     triple('dct:issued', createdTimestamp),
     triple('dct:modified', createdTimestamp),
     triple('foaf:primaryTopic', entryId)
   ])
 
+  const catalogEntries = catalogs.map(catalog =>
+    buildStanza(catalog, [triple('dcat:record', catalogRecordId)])
+  ).join('')
+
   const commentPrefix = typeof index === 'number' ? `Recipe ${index + 1}. ` : ''
 
   return `
 # --------------------------
 # ${commentPrefix}${name}
-#
 ${statement}
 ${catalogRecord}
+${catalogEntries}
 `;
 }
 
 function generateTTLForAllRecipes(recipes) {
   const recipeTTL = recipes.map(generateTTLForRecipe).join('\n')
 
-  return `${PREFIXES}\n${recipeTTL}`;
+  return `${PREFIXES}
+${recipeTTL}`;
 }
 
 function updateFileForRecipes(recipes) {
@@ -287,7 +310,8 @@ function updateFileForRecipes(recipes) {
 
 const recipes = [
   'recipes/Coconut-Braised_Chickpeas_with_Sweet_Potatoes_and_Greens.json',
-  'recipes/Vermont_Whole_Wheat_Oatmeal_Honey_Bread.json'
+  'recipes/Vermont_Whole_Wheat_Oatmeal_Honey_Bread.json',
+  'recipes/Classic_Lasagna.json'
 ]
 
 updateFileForRecipes(recipes)
