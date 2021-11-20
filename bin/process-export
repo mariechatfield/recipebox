@@ -69,6 +69,7 @@ async function unzipRecipes(exportName) {
   console.log(`✅ Successfully extracted ${targetRecipes.length + 1} recipes!`)
 }
 
+
 function run(fileNameArg) {
   const [, directory, path] = fileNameArg.match('^(.*\/)?([^/]+)\.paprikarecipes$')
   const exportName = path.replace('.paprikarecipes', '')
