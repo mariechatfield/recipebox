@@ -253,7 +253,7 @@ function generateTTLForRecipe(filename, index = null) {
     leavening,
     protein,
     subclass,
-    status,
+    status: statusFromTags,
     tags
   } = parseCategories(categories)
 
@@ -261,7 +261,10 @@ function generateTTLForRecipe(filename, index = null) {
   const catalogRecordId = `:CatalogRecord-${uid}`
   const createdTimestamp = `"${new Date(created).toISOString()}"^^xsd:dateTime`
   const formattedSource = `[${source}](${source_url})`
-  const ratingInStars = repeat(Number.parseInt(rating, 10), "★")
+
+  const numberRating = Number.parseInt(rating, 10)
+  const ratingInStars = repeat(numberRating, "★")
+  const status = numberRating > 0 && numberRating < 3 ? ':RecipeStatusFailed' : statusFromTags
 
   const statement = buildStanza(entryId, [
     triple('rdf:type', subclass),

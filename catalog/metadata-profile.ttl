@@ -332,6 +332,14 @@
   skos:broader        :protein_sources_animal_based;
 .
 
+:protein_sources_cheese  rdf:type  skos:Concept ;
+  skos:inScheme       :protein_sources ;
+  skos:prefLabel      "Cheese" ;
+  skos:altLabel       "Cheese" ;
+  dct:identifier      "Cheese" ;
+  skos:broader        :protein_sources_animal_based;
+.
+
 :protein_sources_chicken  rdf:type  skos:Concept ;
   skos:inScheme       :protein_sources ;
   skos:prefLabel      "Chicken" ;
