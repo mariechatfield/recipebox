@@ -2,16 +2,18 @@
 const fs = require("fs");
 const zlib = require('zlib');
 const AdmZip = require("adm-zip");
-const { exec } = require("child_process");
+const { execSync } = require("child_process");
 
 const WORKING_DIRECTORY = 'temp'
 const OUTPUT_DIRECTORY = 'recipes'
 
-function unzipTopLevelExport(exportName) {
+function unzipTopLevelExport(directory = '', exportName) {
   const baseName = `${WORKING_DIRECTORY}/${exportName}`
-  const targetExport = `${baseName}.paprikarecipes`
+  const targetExport = `${directory}${exportName}.paprikarecipes`
   const targetZip = `${baseName}.zip`
   const targetDir = `${baseName}/`
+
+  console.log(`Unzipping ${targetExport}...`)
 
   fs.copyFileSync(targetExport, targetZip)
   const unzip = new AdmZip(targetZip);
@@ -33,15 +35,17 @@ function unzipSingleRecipe(exportName, recipeName) {
   const targetFile = `${OUTPUT_DIRECTORY}/${safeRecipeName}.json`
 
   fs.renameSync(targetRecipe, targetGzip)
-  
+
   const readStream = fs.createReadStream(targetGzip);
   const writeStream = fs.createWriteStream(targetFile, { encoding: 'utf-8' });
 
   readStream.pipe(zlib.createGunzip()).pipe(writeStream);
 
   return new Promise((resolve, reject) => {
-    readStream.on('end', () => {
+    writeStream.on('finish', () => {
       fs.rmSync(targetGzip);
+      console.log(`Formatting ${targetFile}`)
+      execSync(`$(npm bin)/prettier --write ${targetFile} --loglevel=warn`)
       resolve();
     }).on('error', () => {
       reject();
@@ -60,10 +64,32 @@ async function unzipRecipes(exportName) {
       return recipeName[1]
     })
   
+  console.log(`Found ${targetRecipes.length + 1} recipes...`)
   await Promise.all(targetRecipes.map((recipeName) => unzipSingleRecipe(exportName, recipeName)))
-  console.log(`Unzipped ${targetRecipes.length + 1} recipes, now formatting...`)
-  exec(`$(npm bin)/prettier --write ${OUTPUT_DIRECTORY}/*.json`)
+  console.log(`✅ Successfully extracted ${targetRecipes.length + 1} recipes!`)
 }
 
-unzipTopLevelExport('exported')
-unzipRecipes('exported')
+function run(fileNameArg) {
+  const [, directory, path] = fileNameArg.match('^(.*\/)?([^/]+)\.paprikarecipes$')
+  const exportName = path.replace('.paprikarecipes', '')
+
+  unzipTopLevelExport(directory, exportName)
+  unzipRecipes(exportName)
+}
+
+function validate(fileNameArg) {
+  if (!fileNameArg) {
+    console.error('Must pass a valid path to a .paprikarecipes export')
+    process.exit(1);
+  }
+
+  if (!fileNameArg.endsWith('.paprikarecipes')) {
+    console.error('Must be a .paprikarecipes export')
+    process.exit(1);
+  }
+}
+
+const fileNameArg = process.argv[2]
+
+validate(fileNameArg)
+run(fileNameArg)
