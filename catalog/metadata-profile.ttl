@@ -162,7 +162,7 @@
 # #### MetadataSectionPeople
 
 :MetadataPresentation-Recipe-SourceURL
-  rdf:type                dwec:MetadataPresentation ;
+  rdf:type                dwec:MetadataPresentation, dwec:Mandatory ;
   rdfs:label              "Source" ;
   dwec:inMetadataSection  :MetadataSectionPeople ;
   dwec:forType            :Recipe ;
@@ -172,7 +172,7 @@
 # #### MetadataSectionSidebar
 
 :MetadataPresentation-Recipe-Rating
-  rdf:type                dwec:MetadataPresentation ;
+  rdf:type                dwec:MetadataPresentation, dwec:Mandatory ;
   rdfs:label              "Rating" ;
   dwec:inMetadataSection  :MetadataSectionSidebar ;
   dwec:forType            :Recipe ;
@@ -197,7 +197,7 @@
 .
 
 :MetadataPresentation-Recipe-TotalTime
-  rdf:type                dwec:MetadataPresentation ;
+  rdf:type                dwec:MetadataPresentation, dwec:Mandatory ;
   rdfs:label              "Total time" ;
   dwec:inMetadataSection  :MetadataSectionSidebar ;
   dwec:forType            :Recipe ;
@@ -255,7 +255,7 @@
 # Difficulty (single select)
 
 :MetadataPresentation-Difficulty
-  rdf:type                    dwec:MetadataPresentation ;
+  rdf:type                    dwec:MetadataPresentation, dwec:Mandatory ;
   rdf:type                    dwec:Facetable ;
   rdfs:label                  "Difficulty" ;
   dwec:forType                :Recipe ;
@@ -301,7 +301,7 @@
 # Entree protein sources (multiple select)
 
 :MetadataPresentation-Protein
-  rdf:type                dwec:MetadataPresentation ;
+  rdf:type                dwec:MetadataPresentation, dwec:Mandatory ;
   rdf:type                dwec:Facetable ;
   rdfs:label              "Protein Source" ;
   dwec:forType            :RecipeEntree ;
@@ -445,7 +445,7 @@
 # #### MetadataSectionInformational
 
 :MetadataPresentation-Recipe-ImageBase64Encoded
-  rdf:type                    dwec:MetadataPresentation ;
+  rdf:type                    dwec:MetadataPresentation, dwec:Mandatory ;
   rdfs:label                  "Image Preview" ;
   dwec:editHint               "Base64 encoded image to display at top of recipe" ;
   dwec:inMetadataSection      :MetadataSectionInformational ;
@@ -457,7 +457,7 @@
 .
 
 :MetadataPresentation-Recipe-Ingredients
-  rdf:type                    dwec:MetadataPresentation ;
+  rdf:type                    dwec:MetadataPresentation, dwec:Mandatory ;
   rdfs:label                  "Ingredients" ;
   dwec:inMetadataSection      :MetadataSectionInformational ;
   dwec:forType                :Recipe ;
@@ -467,7 +467,7 @@
 .
 
 :MetadataPresentation-Recipe-Directions
-  rdf:type                    dwec:MetadataPresentation ;
+  rdf:type                    dwec:MetadataPresentation, dwec:Mandatory ;
   rdfs:label                  "Directions" ;
   dwec:inMetadataSection      :MetadataSectionInformational ;
   dwec:forType                :Recipe ;
