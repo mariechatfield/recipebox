@@ -1,0 +1,68 @@
+#!/usr/bin/env node
+const fs = require("fs");
+const zlib = require('zlib');
+const AdmZip = require("adm-zip");
+const { exec } = require("child_process");
+
+const WORKING_DIRECTORY = 'temp'
+const OUTPUT_DIRECTORY = 'recipes'
+
+function unzipTopLevelExport(exportName) {
+  const baseName = `${WORKING_DIRECTORY}/${exportName}`
+  const targetExport = `${baseName}.paprikarecipes`
+  const targetZip = `${baseName}.zip`
+  const targetDir = `${baseName}/`
+
+  fs.renameSync(targetExport, targetZip)
+  const unzip = new AdmZip(targetZip);
+  unzip.extractAllTo(targetDir);
+}
+
+function unzipSingleRecipe(exportName, recipeName) {
+  const baseName = `${WORKING_DIRECTORY}/${exportName}/${recipeName}`
+  const safeRecipeName = recipeName
+    // Strip out apostrophes and periods
+    .replace(/['’.]/g, '')
+    // Any non-alpha character becomes an underscore
+    .replace(/[^\w]/g, '_')
+    // Strip out multiple underscores in a row
+    .replace(/_+/g, '_');
+  const targetRecipe = `${baseName}.paprikarecipe`
+  const targetGzip = `${baseName}.json.gz`
+  const targetFile = `${WORKING_DIRECTORY}/${exportName}/${safeRecipeName}.json`
+
+  fs.renameSync(targetRecipe, targetGzip)
+  
+  const readStream = fs.createReadStream(targetGzip);
+  const writeStream = fs.createWriteStream(targetFile, { encoding: 'utf-8' });
+
+  readStream.pipe(zlib.createGunzip()).pipe(writeStream);
+
+  return new Promise((resolve, reject) => {
+    readStream.on('end', () => {
+      fs.rmSync(targetGzip);
+      resolve();
+    }).on('error', () => {
+      reject();
+    });
+  });
+}
+
+async function unzipRecipes(exportName) {
+  const targetDir = `${WORKING_DIRECTORY}/${exportName}/`
+
+  const allFiles = fs.readdirSync(targetDir)
+  const targetRecipes = allFiles
+    .filter(file => file.endsWith('.paprikarecipe'))
+    .map(file => {
+      const recipeName = file.match(/(.*)(\.paprikarecipe)/);
+      return recipeName[1]
+    })
+  
+  await Promise.all(targetRecipes.map((recipeName) => unzipSingleRecipe(exportName, recipeName)))
+  console.log(`Unzipped ${targetRecipes.length + 1} recipes, now formatting...`)
+  exec(`$(npm bin)/prettier --write ${WORKING_DIRECTORY}/${exportName}/*.json`)
+}
+
+unzipTopLevelExport('exported')
+unzipRecipes('exported')

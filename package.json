@@ -1,0 +1,10 @@
+{
+  "name": "recipebox",
+  "version": "1.0.0",
+  "main": "index.js",
+  "private": true,
+  "dependencies": {
+    "adm-zip": "0.5.9",
+    "prettier": "2.4.1"
+  }
+}
