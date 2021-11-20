@@ -3,6 +3,9 @@ const fs = require("fs");
 
 const TAB = 4
 
+const RECIPE_DIRECTORY = 'recipes'
+const OUTPUT_FILE = 'catalog/recipes.ttl'
+
 const PREFIXES = `# Prefix Declarations
 
 @prefix :  <https://recipebox.linked.data.world/d/ddw-catalogs/> .
@@ -314,18 +317,16 @@ ${recipeTTL}`;
 
 function updateFileForRecipes(recipes) {
   fs.writeFileSync(
-    'catalog/recipes.ttl',
+    OUTPUT_FILE,
     generateTTLForAllRecipes(recipes),
     { encoding: 'utf-8' }
   )
 
-  console.log('Updated!')
+  console.log(`✅ Wrote ${recipes.length + 1} recipes to '${OUTPUT_FILE}'`)
 }
 
-const recipes = [
-  'recipes/Coconut-Braised_Chickpeas_with_Sweet_Potatoes_and_Greens.json',
-  'recipes/Vermont_Whole_Wheat_Oatmeal_Honey_Bread.json',
-  'recipes/Classic_Lasagna.json'
-]
+const recipes = fs.readdirSync(RECIPE_DIRECTORY)
+  .filter(recipePath => recipePath.endsWith('.json'))
+  .map(recipePath => `${RECIPE_DIRECTORY}/${recipePath}`);
 
-updateFileForRecipes(recipes)
+updateFileForRecipes(recipes);
