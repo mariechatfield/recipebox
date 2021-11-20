@@ -489,16 +489,46 @@
 
 # ### Relationship Presentations
 
-# Our catalog ships with some default relationships between metadata resources out of the box.
-
-# If you don't see an existing default relationship between the resource classes, you will need to create a custom relationship.
-
-# `dwec:RelationshipPresentations` allow you to add on to those existing built-in relationships.
-
 :RelationshipSection
   rdf:type                dwec:RelationshipSection ;
   rdfs:label              "Relationship Section" ;
   dwec:inMetadataProfile  :MetadataProfileDefault ;
+.
+
+:RecipeSubstitution
+  rdf:type                    dwec:RelationshipPresentation ;
+  dwec:inRelationshipSection  :RelationshipSection ;
+  dwec:forType                :RecipeBread ;
+  dwec:forTargetType          :RecipeBread ;
+  dwec:forRelationshipType    dwec:related ;
+  dwec:relationshipTerm       [
+    rdf:type      dwec:RelationshipTerm ;
+    rdfs:label    "is a substitute for" ;
+    label:plural  "are substitutes for" ;
+  ] ;
+  dwec:resourceTerm [
+    rdf:type      dwec:ResourceTerm ;
+    rdfs:label    "Bread" ;
+    label:plural  "Breads" ;
+  ] ;
+.
+
+:RecipeSubstitutedBy
+  rdf:type                    dwec:RelationshipPresentation ;
+  dwec:inRelationshipSection  :RelationshipSection ;
+  dwec:forType                :RecipeBread ;
+  dwec:forTargetType          :RecipeBread ;
+  dwec:forRelationshipType    [ dwec:inversePath dwec:related ] ;
+  dwec:relationshipTerm       [
+    rdf:type      dwec:RelationshipTerm ;
+    rdfs:label    "is substituted by" ;
+    label:plural  "are substited by" ;
+  ] ;
+  dwec:resourceTerm [
+      rdf:type      dwec:ResourceTerm ;
+      rdfs:label    "Bread" ;
+      label:plural  "Breads" ;
+  ] ;
 .
 
 # ### Defining dwec:Catalogs
