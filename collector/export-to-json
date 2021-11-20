@@ -27,9 +27,10 @@ function unzipSingleRecipe(exportName, recipeName) {
     .replace(/[^\w]/g, '_')
     // Strip out multiple underscores in a row
     .replace(/_+/g, '_');
+
   const targetRecipe = `${baseName}.paprikarecipe`
   const targetGzip = `${baseName}.json.gz`
-  const targetFile = `${WORKING_DIRECTORY}/${exportName}/${safeRecipeName}.json`
+  const targetFile = `${OUTPUT_DIRECTORY}/${safeRecipeName}.json`
 
   fs.renameSync(targetRecipe, targetGzip)
   
@@ -61,7 +62,7 @@ async function unzipRecipes(exportName) {
   
   await Promise.all(targetRecipes.map((recipeName) => unzipSingleRecipe(exportName, recipeName)))
   console.log(`Unzipped ${targetRecipes.length + 1} recipes, now formatting...`)
-  exec(`$(npm bin)/prettier --write ${WORKING_DIRECTORY}/${exportName}/*.json`)
+  exec(`$(npm bin)/prettier --write ${OUTPUT_DIRECTORY}/*.json`)
 }
 
 unzipTopLevelExport('exported')
