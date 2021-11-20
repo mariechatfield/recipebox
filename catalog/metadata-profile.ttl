@@ -98,7 +98,7 @@
   dwec:inMetadataProfile :MetadataProfileDefault ;
 .
 
-#  
+#
 
 :MetadataProfileDefault
   rdf:type dwec:MetadataProfile ;

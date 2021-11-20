@@ -50,20 +50,34 @@ const RESERVED_TAGS = {
 
 const IGNORED_TAGS = ["Luis", "Favorite", "Oven", "Stove", "Sheet Pan"]
 
-function triple(predicate, object, { quoted } = { quoted: false }) {
-  if (!object) {
-    return null
-  }
-
-  if (quoted) {
-    const escapedString = object.toString()
+function quoteString(rawString) {
+  const escapedString = rawString.toString()
       .replace(/\n/g, '\\n')
       .replace(/"/g, '\\"');
 
-    return { predicate, object: `"${escapedString}"` }
+  return `"${escapedString}"`;
+}
+
+function triple(predicate, object, { quoted } = { quoted: false }) {
+  const isArray = Array.isArray(object)
+
+  if (!object || (isArray && object.length === 0)) {
+    return null
   }
 
-  return { predicate, object }
+  if (isArray) {
+    const stringArray = quoted ? object.map(quoteString) : object
+
+    return {
+      predicate,
+      object: stringArray.join(", ")
+    }
+  }
+
+  return {
+    predicate,
+    object: quoted ? quoteString(object) : object
+  }
 }
 
 function repeat(num, character = ' ') {
@@ -76,7 +90,7 @@ function formatTriples(triples) {
 
   return triples.map(({ predicate, object }) => {
     const justify = totalPadding - predicate.length
-    return `${repeat(TAB)}${predicate}${repeat(justify)}${object};`
+    return `${repeat(TAB)}${predicate}${repeat(justify)}${object} ;`
   }).join('\n')
 }
 
@@ -138,7 +152,7 @@ function parseCategories(categories) {
         return;
       }
       case RESERVED_TAGS.FAVORITES_MARIE: {
-        catalogs.push(':Catalog-Favorites');
+        catalogs.unshift(':Catalog-Favorites');
         return;
       }
       case RESERVED_TAGS.LEAVENING_QUICK: {
@@ -209,7 +223,7 @@ function parseCategories(categories) {
 
 function generateTTLForRecipe(filename, index = null) {
   const recipeFile = JSON.parse(fs.readFileSync(filename, { encoding: 'utf-8' }));
-  
+
   const {
     categories,
     created,
@@ -248,9 +262,13 @@ function generateTTLForRecipe(filename, index = null) {
 
   const statement = buildStanza(entryId, [
     triple('rdf:type', subclass),
+    triple('dct:identifier', uid, { quoted: true }),
     triple('dct:title', name, { quoted: true }),
     triple('dwec:description', description, { quoted: true }),
+    triple('dwec:hasAssetStatus', status),
+    triple('dwec:textTag', tags, { quoted: true }),
     triple(':cook_time', cook_time, { quoted: true }),
+    triple(':dietary_preferences', dietaryPreferences),
     triple(':difficulty', difficulty),
     triple(':directions', directions, { quoted: true }),
     triple(':image_base64', `"${photo_data}"^^xsd:anyURI`),
@@ -258,15 +276,11 @@ function generateTTLForRecipe(filename, index = null) {
     triple(':leavening', leavening),
     triple(':notes', notes, { quoted: true }),
     triple(':prep_time', prep_time, { quoted: true }),
+    triple(':protein', protein),
     triple(':rating', ratingInStars, { quoted: true }),
     triple(':servings', servings, { quoted: true }),
     triple(':source_url', formattedSource, { quoted: true }),
     triple(':total_time', total_time, { quoted: true }),
-    triple('dct:identifier', uid, { quoted: true }),
-    triple('dwec:hasAssetStatus', status),
-    ...tags.map(tag => triple('dwec:textTag', tag, { quoted: true })),
-    ...dietaryPreferences.map(preference => triple(':dietary_preferences', preference)),
-    ...protein.map(proteinSource => triple(':protein', proteinSource))
   ])
 
   const catalogRecord = buildStanza(catalogRecordId, [
