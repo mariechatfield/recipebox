@@ -6,18 +6,12 @@ const prettier = require("prettier");
 const {
   AUDIT_LOG,
   IGNORED_IDS,
-  OUTPUT_DIRECTORY,
+  RECIPE_DIRECTORY,
   escapeForFilePath,
+  mapByUID,
   startProcess,
   updateAuditLog,
 } = require("./utils");
-
-function mapByUID(resultArray) {
-  return resultArray.reduce(
-    (memo, data) => ({ ...memo, [data.uid]: data }),
-    {}
-  );
-}
 
 const PAPRIKA_AUTH = `${process.env.PAPRIKA_USERNAME}:${process.env.PAPRIKA_PASSWORD}`;
 
@@ -164,7 +158,7 @@ async function saveRecipe(recipeId, filePath = "") {
 
   return new Promise((resolve) => {
     fs.writeFile(
-      `${OUTPUT_DIRECTORY}/${recipeFilePath}`,
+      `${RECIPE_DIRECTORY}/${recipeFilePath}`,
       prettier.format(JSON.stringify(recipe), { filepath: ".json" }),
       { encoding: "utf-8" },
       () => resolve()

@@ -1,11 +1,14 @@
 #!/usr/bin/env node
 const fs = require("fs");
-const { startProcess } = require("./utils");
+const {
+  CATALOG_DIRECTORY,
+  RECIPE_DIRECTORY,
+  startProcess,
+} = require("./utils");
 
 const TAB = 4;
 
-const RECIPE_DIRECTORY = "recipes";
-const OUTPUT_FILE = "catalog/recipes.ttl";
+const OUTPUT_FILE = `${CATALOG_DIRECTORY}/recipes.ttl`;
 
 const PREFIXES = `# Prefix Declarations
 

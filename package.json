@@ -4,8 +4,7 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "sync": "./bin/sync-recipes && ./bin/run-collector",
-    "collector": "./bin/run-collector"
+    "sync": "./bin/sync-recipes && ./bin/run-collector && ./bin/upload-to-ddw"
   },
   "dependencies": {
     "adm-zip": "0.5.9",

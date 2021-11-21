@@ -3,10 +3,14 @@ const fs = require("fs");
 const zlib = require("zlib");
 const AdmZip = require("adm-zip");
 const { execSync } = require("child_process");
-const { escapeForFilePath, updateAuditLog, startProcess } = require("./utils");
+const {
+  RECIPE_DIRECTORY,
+  escapeForFilePath,
+  updateAuditLog,
+  startProcess,
+} = require("./utils");
 
 const WORKING_DIRECTORY = "temp";
-const OUTPUT_DIRECTORY = "recipes";
 
 function unzipTopLevelExport(directory = "", exportName) {
   const baseName = `${WORKING_DIRECTORY}/${exportName}`;
@@ -27,7 +31,7 @@ function unzipSingleRecipe(exportName, recipeName) {
 
   const targetRecipe = `${baseName}.paprikarecipe`;
   const targetGzip = `${baseName}.json.gz`;
-  const targetFile = `${OUTPUT_DIRECTORY}/${safeRecipeName}.json`;
+  const targetFile = `${RECIPE_DIRECTORY}/${safeRecipeName}.json`;
 
   fs.renameSync(targetRecipe, targetGzip);
 
