@@ -4,6 +4,10 @@ const OUTPUT_DIRECTORY = "recipes";
 const AUDIT_LOG = "auditLog.json";
 const IGNORED_IDS = "ignoredIds.json";
 
+function startProcess(processName) {
+  console.log(`\n----------  ${processName}  ----------\n`);
+}
+
 function escapeForFilePath(originalString) {
   return (
     originalString
@@ -65,5 +69,6 @@ module.exports = {
   IGNORED_IDS,
   OUTPUT_DIRECTORY,
   escapeForFilePath,
+  startProcess,
   updateAuditLog,
 };

@@ -8,6 +8,7 @@ const {
   IGNORED_IDS,
   OUTPUT_DIRECTORY,
   escapeForFilePath,
+  startProcess,
   updateAuditLog,
 } = require("./utils");
 
@@ -18,7 +19,7 @@ function mapByUID(resultArray) {
   );
 }
 
-const PAPRIKA_AUTH = `${PAPRIKA_USERNAME}:${PAPRIKA_PASSWORD}`;
+const PAPRIKA_AUTH = `${process.env.PAPRIKA_USERNAME}:${process.env.PAPRIKA_PASSWORD}`;
 
 const PAPRIKA_API = "https://www.paprikaapp.com/api/v1/sync";
 const HEADERS = {
@@ -33,7 +34,7 @@ function getPaprika(path) {
     https.get(`${PAPRIKA_API}/${path}/`, { headers: HEADERS }, (res) => {
       let rawData = "";
       if (res.statusCode !== 200) {
-        reject(res.statusCode);
+        reject(`${res.statusCode}, ${res.statusMessage}`);
         return;
       }
       res.on("data", (d) => {
@@ -51,7 +52,7 @@ function getBase64EncodedImage(path) {
     http.get(path, (res) => {
       let rawData = "";
       if (res.statusCode !== 200) {
-        reject(res.statusCode);
+        reject(`${res.statusCode}, ${res.statusMessage}`);
         return;
       }
       res.setEncoding("base64");
@@ -66,8 +67,13 @@ function getBase64EncodedImage(path) {
 }
 
 async function getAllRecipes() {
-  const response = await getPaprika("recipes");
-  return mapByUID(response.result);
+  try {
+    const response = await getPaprika("recipes");
+    return mapByUID(response.result);
+  } catch (err) {
+    console.error("Could not fetch all recipes:", err);
+    process.exit(1);
+  }
 }
 
 function getChanges(syncedRecipes) {
@@ -96,7 +102,7 @@ function getChanges(syncedRecipes) {
       }
     } else {
       if (uid in ignoredIds) {
-        console.log(`Ignoring ${uid} because "${ignoredIds[uid].reason}"`);
+        // no op
       } else {
         toCreate.push(syncedRecipe);
       }
@@ -121,9 +127,14 @@ async function getCategories() {
     return categories;
   }
 
-  const response = await getPaprika("categories");
-  categories = mapByUID(response.result);
-  return categories;
+  try {
+    const response = await getPaprika("categories");
+    categories = mapByUID(response.result);
+    return categories;
+  } catch (err) {
+    console.error("Could not fetch category details:", err);
+    process.exit(1);
+  }
 }
 
 async function saveRecipe(recipeId, filePath = "") {
@@ -204,6 +215,8 @@ async function handleUpdates(recipesToUpdate) {
 }
 
 async function run() {
+  startProcess("Sync Recipes");
+
   const syncedRecipes = await getAllRecipes();
   const { toDelete, toUpdate, toCreate, noOp } = getChanges(syncedRecipes);
 
@@ -219,6 +232,4 @@ async function run() {
   }
 }
 
-if (process.argv[1].endsWith("sync-recipes")) {
-  run();
-}
+run();

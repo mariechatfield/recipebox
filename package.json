@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "private": true,
+  "scripts": {
+    "sync": "./bin/sync-recipes && ./bin/run-collector"
+  },
   "dependencies": {
     "adm-zip": "0.5.9",
     "prettier": "2.4.1"
