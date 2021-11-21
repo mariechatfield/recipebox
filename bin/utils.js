@@ -2,9 +2,10 @@ const fs = require("fs");
 
 const CATALOG_DIRECTORY = "catalog";
 const RECIPE_DIRECTORY = "recipes";
+const STATIC_DIRECTORY = `${RECIPE_DIRECTORY}/static`;
 
-const AUDIT_LOG = "auditLog.json";
-const IGNORED_IDS = "ignoredIds.json";
+const AUDIT_LOG = `${STATIC_DIRECTORY}/auditLog.json`;
+const IGNORED_IDS = `${STATIC_DIRECTORY}/ignoredIds.json`;
 
 function startProcess(processName) {
   console.log(`\n----------  ${processName}  ----------\n`);
