@@ -1,0 +1,77 @@
+#!/usr/bin/env node
+const fs = require("fs");
+const https = require("https");
+const FormData = require("form-data");
+const { startProcess, CATALOG_DIRECTORY } = require("./utils");
+
+const DDW_API = "https://ddw-dwapipublic.dev.data.world/v0";
+const UPLOAD_DATASET = "recipebox/ddw-catalogs";
+const UPLOAD_PATH = `uploads/${UPLOAD_DATASET}/files`;
+
+const HEADERS = {
+  Accept: "application/json",
+  Authorization: `Bearer ${process.env.DDW_TOKEN}`,
+};
+
+function uploadFiles(filePaths) {
+  return new Promise((resolve, reject) => {
+    const form = new FormData();
+
+    filePaths.forEach((filePath) => {
+      form.append("file", fs.createReadStream(filePath));
+    });
+
+    const req = https.request(
+      `${DDW_API}/${UPLOAD_PATH}`,
+      { headers: { ...HEADERS, ...form.getHeaders() }, method: "POST" },
+      (res) => {
+        let rawData = "";
+        if (res.statusCode !== 200) {
+          reject(`${res.statusCode}, ${res.statusMessage}`);
+          return;
+        }
+        res.on("data", (d) => {
+          rawData += d;
+        });
+        res.on("end", () => {
+          resolve(JSON.parse(rawData));
+        });
+      }
+    );
+
+    form.pipe(req);
+  });
+}
+
+function getFilesToUpload() {
+  const ttlFiles = fs
+    .readdirSync(CATALOG_DIRECTORY)
+    .filter((filePath) => filePath.endsWith(".ttl"))
+    .map((filePath) => `${CATALOG_DIRECTORY}/${filePath}`);
+
+  return ttlFiles;
+}
+
+async function uploadCatalog() {
+  const ttlFiles = getFilesToUpload();
+
+  console.log(
+    `Uploading to ${UPLOAD_DATASET}:`,
+    ttlFiles.map((file) => `\n- ${file}`).join("")
+  );
+
+  try {
+    await uploadFiles(ttlFiles);
+    console.log(`✅ Successfully uploaded ${ttlFiles.length} files!`);
+  } catch (err) {
+    console.error("Could not upload files:", err);
+    process.exit(1);
+  }
+}
+
+async function run() {
+  startProcess("Upload to DDW");
+  uploadCatalog();
+}
+
+run();

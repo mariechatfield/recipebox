@@ -1,6 +1,7 @@
 const fs = require("fs");
 
 const OUTPUT_DIRECTORY = "recipes";
+const CATALOG_DIRECTORY = "catalog";
 const AUDIT_LOG = "auditLog.json";
 const IGNORED_IDS = "ignoredIds.json";
 
@@ -66,6 +67,7 @@ async function updateAuditLog() {
 
 module.exports = {
   AUDIT_LOG,
+  CATALOG_DIRECTORY,
   IGNORED_IDS,
   OUTPUT_DIRECTORY,
   escapeForFilePath,
