@@ -135,7 +135,7 @@ async function saveRecipe(recipeId, filePath = "") {
 
   const recipe = response.result;
 
-  const safeRecipeName = filePath || escapeForFilePath(recipe.name);
+  const recipeFilePath = filePath || `${escapeForFilePath(recipe.name)}.json`;
 
   // Parse category UIDs to names
   if (recipe.categories.length > 0) {
@@ -153,7 +153,7 @@ async function saveRecipe(recipeId, filePath = "") {
 
   return new Promise((resolve) => {
     fs.writeFile(
-      `${OUTPUT_DIRECTORY}/${safeRecipeName}.json`,
+      `${OUTPUT_DIRECTORY}/${recipeFilePath}`,
       prettier.format(JSON.stringify(recipe), { filepath: ".json" }),
       { encoding: "utf-8" },
       () => resolve()
