@@ -21,8 +21,8 @@
 # #### Generic resource classes
 
 :Recipe a owl:Class ;
-  rdfs:label "Recipe" ;
-  label:plural "Recipes" ;
+  rdfs:label "Other Recipe" ;
+  label:plural "Other Recipes" ;
 .
 
 :RecipeEntree a owl:Class ;
