@@ -1,97 +1,107 @@
 #!/usr/bin/env node
-const fs = require('fs');
+const fs = require("fs");
 const https = require("https");
 const http = require("http");
-const prettier = require("prettier")
-const { AUDIT_LOG, IGNORED_IDS, OUTPUT_DIRECTORY, escapeForFilePath, updateAuditLog } = require("./utils");
+const prettier = require("prettier");
+const {
+  AUDIT_LOG,
+  IGNORED_IDS,
+  OUTPUT_DIRECTORY,
+  escapeForFilePath,
+  updateAuditLog,
+} = require("./utils");
 
 function mapByUID(resultArray) {
-  return resultArray.reduce((memo, data) => 
-      ({ ...memo, [data.uid]: data }),
-    {})
+  return resultArray.reduce(
+    (memo, data) => ({ ...memo, [data.uid]: data }),
+    {}
+  );
 }
 
-const PAPRIKA_AUTH = `${PAPRIKA_USERNAME}:${PAPRIKA_PASSWORD}`
+const PAPRIKA_AUTH = `${PAPRIKA_USERNAME}:${PAPRIKA_PASSWORD}`;
 
 const PAPRIKA_API = "https://www.paprikaapp.com/api/v1/sync";
 const HEADERS = {
-  Authorization: `Basic ${Buffer.from(PAPRIKA_AUTH).toString('base64')}`
-}
+  Authorization: `Basic ${Buffer.from(PAPRIKA_AUTH).toString("base64")}`,
+};
 
-let categories = null
+let categories = null;
 
 function getPaprika(path) {
   return new Promise((resolve, reject) => {
     // According to the API, all resources are directories
     https.get(`${PAPRIKA_API}/${path}/`, { headers: HEADERS }, (res) => {
-      let rawData = ''
+      let rawData = "";
       if (res.statusCode !== 200) {
         reject(res.statusCode);
-        return
+        return;
       }
-      res.on('data', (d) => {
-        rawData += d
-      })
-      res.on('end', () => {
-        resolve(JSON.parse(rawData))
-      })
-    })
-  })
+      res.on("data", (d) => {
+        rawData += d;
+      });
+      res.on("end", () => {
+        resolve(JSON.parse(rawData));
+      });
+    });
+  });
 }
-
 
 function getBase64EncodedImage(path) {
   return new Promise((resolve, reject) => {
     http.get(path, (res) => {
-      let rawData = ''
+      let rawData = "";
       if (res.statusCode !== 200) {
         reject(res.statusCode);
-        return
+        return;
       }
-      res.setEncoding('base64');
-      res.on('data', (d) => {
-        rawData += d
-      })
-      res.on('end', () => {
-        resolve(rawData)
-      })
-    })
-  })
+      res.setEncoding("base64");
+      res.on("data", (d) => {
+        rawData += d;
+      });
+      res.on("end", () => {
+        resolve(rawData);
+      });
+    });
+  });
 }
 
 async function getAllRecipes() {
-  const response = await getPaprika('recipes')
-  return mapByUID(response.result)
+  const response = await getPaprika("recipes");
+  return mapByUID(response.result);
 }
 
 function getChanges(syncedRecipes) {
-  const toDelete = []
-  const toUpdate = []
-  const toCreate = []
-  const noOp = []
+  const toDelete = [];
+  const toUpdate = [];
+  const toCreate = [];
+  const noOp = [];
 
-  const knownRecipes = JSON.parse(fs.readFileSync(AUDIT_LOG, { encoding: 'utf-8' }))
-  const ignoredIds = JSON.parse(fs.readFileSync(IGNORED_IDS, { encoding: 'utf-8' }))
+  const knownRecipes = JSON.parse(
+    fs.readFileSync(AUDIT_LOG, { encoding: "utf-8" })
+  );
+  const ignoredIds = JSON.parse(
+    fs.readFileSync(IGNORED_IDS, { encoding: "utf-8" })
+  );
 
   Object.keys(syncedRecipes).forEach((uid) => {
-    const syncedRecipe = syncedRecipes[uid]
+    const syncedRecipe = syncedRecipes[uid];
 
     if (uid in knownRecipes) {
-      const knownRecipe = knownRecipes[uid]
+      const knownRecipe = knownRecipes[uid];
 
       if (syncedRecipe.hash === knownRecipe.hash) {
-        noOp.push(knownRecipe)
+        noOp.push(knownRecipe);
       } else {
-        toUpdate.push(knownRecipe)
+        toUpdate.push(knownRecipe);
       }
     } else {
       if (uid in ignoredIds) {
-        console.log(`Ignoring ${uid} because "${ignoredIds[uid].reason}"`)
+        console.log(`Ignoring ${uid} because "${ignoredIds[uid].reason}"`);
       } else {
-        toCreate.push(syncedRecipe)
+        toCreate.push(syncedRecipe);
       }
     }
-  })
+  });
 
   Object.keys(knownRecipes).forEach((uid) => {
     const knownRecipe = knownRecipes[uid];
@@ -99,119 +109,116 @@ function getChanges(syncedRecipes) {
     if (uid in syncedRecipes) {
       // Handled in previous loop
     } else {
-      toDelete.push(knownRecipe)
+      toDelete.push(knownRecipe);
     }
-  })
+  });
 
-  return { toDelete, toUpdate, toCreate, noOp }
+  return { toDelete, toUpdate, toCreate, noOp };
 }
 
 async function getCategories() {
   if (categories) {
-    return categories
+    return categories;
   }
 
-  const response = await getPaprika('categories')  
-  categories = mapByUID(response.result)
-  return categories
+  const response = await getPaprika("categories");
+  categories = mapByUID(response.result);
+  return categories;
 }
 
-async function saveRecipe(recipeId, filePath = '') {
-  const response = await getPaprika(`recipe/${recipeId}`)
+async function saveRecipe(recipeId, filePath = "") {
+  const response = await getPaprika(`recipe/${recipeId}`);
 
   if (response.error) {
-    throw new Error(response.error.message)
+    throw new Error(response.error.message);
   }
 
-  const recipe = response.result
+  const recipe = response.result;
 
   const safeRecipeName = filePath || escapeForFilePath(recipe.name);
 
   // Parse category UIDs to names
   if (recipe.categories.length > 0) {
-    const knownCategories = await getCategories()
-    recipe.categories = recipe.categories.map(categoryId => knownCategories[categoryId].name)
+    const knownCategories = await getCategories();
+    recipe.categories = recipe.categories.map(
+      (categoryId) => knownCategories[categoryId].name
+    );
   }
 
   // Translate AWS photo URL to base64 encoded data
   if (recipe.photo_url) {
-    recipe.photo_data = await getBase64EncodedImage(recipe.photo_url)
-    delete recipe.photo_url
+    recipe.photo_data = await getBase64EncodedImage(recipe.photo_url);
+    delete recipe.photo_url;
   }
 
   return new Promise((resolve) => {
     fs.writeFile(
-      `${OUTPUT_DIRECTORY}/${safeRecipeName}.json`, 
-      prettier.format(JSON.stringify(recipe), { filepath: '.json' }), 
-      { encoding: 'utf-8' },
+      `${OUTPUT_DIRECTORY}/${safeRecipeName}.json`,
+      prettier.format(JSON.stringify(recipe), { filepath: ".json" }),
+      { encoding: "utf-8" },
       () => resolve()
-    )
-  })
+    );
+  });
 }
 
 async function handleCreates(recipesToCreate) {
   if (recipesToCreate.length === 0) {
-    console.log('No recipes to create!')
-    return
+    console.log("No recipes to create!");
+    return;
   }
 
-  console.log(`Creating ${recipesToCreate.length} recipes...`)
+  console.log(`Creating ${recipesToCreate.length} recipes...`);
 
-  await Promise.all(recipesToCreate.map((recipe) => 
-    saveRecipe(recipe.uid))
-  )
+  await Promise.all(recipesToCreate.map((recipe) => saveRecipe(recipe.uid)));
 }
 
 async function handleDeletes(recipesToDelete) {
   if (recipesToDelete.length === 0) {
-    console.log('No recipes to delete!')
-    return
+    console.log("No recipes to delete!");
+    return;
   }
 
-  console.log(`Deleting ${recipesToDelete.length} recipes...`)
+  console.log(`Deleting ${recipesToDelete.length} recipes...`);
 
-  await Promise.all(recipesToDelete.map((recipeData) => {
-    console.log(`  - ${recipeData.filePath}`)
-    return new Promise(resolve => 
-      fs.rm(recipeData.filePath, () => resolve())
-    )
-  }))
+  await Promise.all(
+    recipesToDelete.map((recipeData) => {
+      console.log(`  - ${recipeData.filePath}`);
+      return new Promise((resolve) =>
+        fs.rm(recipeData.filePath, () => resolve())
+      );
+    })
+  );
 }
 
 async function handleUpdates(recipesToUpdate) {
   if (recipesToUpdate.length === 0) {
-    console.log('No recipes to update!')
-    return
+    console.log("No recipes to update!");
+    return;
   }
 
-  console.log(`Updating ${recipesToUpdate.length} recipes...`)
+  console.log(`Updating ${recipesToUpdate.length} recipes...`);
 
-  await Promise.all(recipesToUpdate.map((recipe) => 
-    saveRecipe(recipe.uid, recipe.filePath))
-  )
+  await Promise.all(
+    recipesToUpdate.map((recipe) => saveRecipe(recipe.uid, recipe.filePath))
+  );
 }
 
 async function run() {
-  const syncedRecipes = await getAllRecipes()
-  const { 
-    toDelete,
-    toUpdate,
-    toCreate,
-    noOp
-  } = getChanges(syncedRecipes)
-  
-  await handleDeletes(toDelete)
-  await handleUpdates(toUpdate)
-  await handleCreates(toCreate)
+  const syncedRecipes = await getAllRecipes();
+  const { toDelete, toUpdate, toCreate, noOp } = getChanges(syncedRecipes);
 
-  console.log(`${noOp.length} recipes require no updates`)
+  await handleDeletes(toDelete);
+  await handleUpdates(toUpdate);
+  await handleCreates(toCreate);
+
+  console.log(`${noOp.length} recipes require no updates`);
 
   if (toCreate.length > 0 || toDelete.length > 0 || toUpdate.length > 0) {
-    console.log('Updating audit log...')
-    updateAuditLog()
+    console.log("Updating audit log...");
+    updateAuditLog();
   }
 }
 
-if (process.argv[1].endsWith('sync-recipes')) {
-  run()
+if (process.argv[1].endsWith("sync-recipes")) {
+  run();
 }

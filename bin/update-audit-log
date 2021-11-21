@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-const { updateAuditLog } = require("./utils")
+const { updateAuditLog } = require("./utils");
 
 function run() {
-  updateAuditLog()
+  updateAuditLog();
 }
 
-run()
+run();
