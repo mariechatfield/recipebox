@@ -1,0 +1,47 @@
+# Prefix Declarations
+
+@prefix :  <https://recipebox.linked.data.world/d/ddw-catalogs/> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix label: <http://purl.org/net/vocab/2004/03/label#> .
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
+@prefix dwec-database: <https://dwec.data.world/v0/database-types/> .
+@prefix dwec-jdbc: <https://dwec.data.world/v0/jdbc-types/> .
+@prefix dwec:  <https://dwec.data.world/v0/> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix database-types:  <https://dwec.data.world/v0/database-types/> .
+@prefix jdbc-types:  <https://dwec.data.world/v0/jdbc-types/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix csvw:   <http://www.w3.org/ns/csvw#>.
+@prefix dcat:   <http://www.w3.org/ns/dcat#>.
+
+
+# --------------------------
+# Fancy Dinner Party
+
+:Menu-FancyDinnerParty
+    rdf:type                :Menu ;
+    dct:identifier          "FancyDinnerParty" ;
+    dct:title               "Fancy Dinner Party (Summer)" ;
+    dct:description         "Having friends over for a delightful dinner." ;
+    # Cornmeal-Crusted Chicken Cutlets with Zucchini Ribbon Salad
+    dwec:related            :RecipeEntree-D442FA69-0191-4104-9391-E049B7EB7AE3 ;
+    # Nilla Wafer Banana Pudding
+    dwec:related            :RecipeDessert-8E77CDBB-BBFF-4762-8C06-95E339A8F455 ;
+    # Sweet Tea
+    dwec:related            :Recipe-408DB3B3-65A3-491D-89F8-328AD57203FA ;
+.
+
+:CatalogRecord-FancyDinnerParty
+    rdf:type              dcat:CatalogRecord ;
+    dct:issued            "2021-11-21T15:37:14.789Z"^^xsd:dateTime ;
+    dct:modified          "2021-11-21T15:37:14.789Z"^^xsd:dateTime ;
+    foaf:primaryTopic     :Menu-FancyDinnerParty ;
+.
+
+:Catalog-SpecialOccasions
+    dcat:record     :CatalogRecord-FancyDinnerParty ;
+.

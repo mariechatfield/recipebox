@@ -21,7 +21,6 @@
 # #### Generic resource classes
 
 :Recipe a owl:Class ;
-  a dwec:Facetable;
   rdfs:label "Recipe" ;
   label:plural "Recipes" ;
 .
@@ -38,10 +37,21 @@
   label:plural "Breads" ;
 .
 
+:RecipeSide a owl:Class ;
+  rdfs:subClassOf :Recipe ;
+  rdfs:label "Side" ;
+  label:plural "Sides" ;
+.
+
 :RecipeDessert a owl:Class ;
   rdfs:subClassOf :Recipe ;
   rdfs:label "Dessert" ;
   label:plural "Desserts" ;
+.
+
+:Menu a owl:Class ;
+  rdfs:label "Menu" ;
+  label:plural "Menus" ;
 .
 
 # ## Metadata Sections
@@ -495,39 +505,43 @@
   dwec:inMetadataProfile  :MetadataProfileDefault ;
 .
 
-:RecipeSubstitution
+# 1 Recipe is included in this Menu
+# 5 Recipes are included in this Menu
+:MenuToRecipe
   rdf:type                    dwec:RelationshipPresentation ;
   dwec:inRelationshipSection  :RelationshipSection ;
-  dwec:forType                :RecipeBread ;
-  dwec:forTargetType          :RecipeBread ;
+  dwec:forType                :Menu ;
+  dwec:forTargetType          :Recipe ;
   dwec:forRelationshipType    dwec:related ;
   dwec:relationshipTerm       [
     rdf:type      dwec:RelationshipTerm ;
-    rdfs:label    "is a substitute for" ;
-    label:plural  "are substitutes for" ;
+    rdfs:label    "is included in" ;
+    label:plural  "are included in" ;
   ] ;
   dwec:resourceTerm [
     rdf:type      dwec:ResourceTerm ;
-    rdfs:label    "Bread" ;
-    label:plural  "Breads" ;
+    rdfs:label    "Recipe" ;
+    label:plural  "Recipes" ;
   ] ;
 .
 
-:RecipeSubstitutedBy
+# 1 Recipe pairs well with this Entree
+# 5 Recipes pair well with this Entree
+:EntreeToRecipe
   rdf:type                    dwec:RelationshipPresentation ;
   dwec:inRelationshipSection  :RelationshipSection ;
-  dwec:forType                :RecipeBread ;
-  dwec:forTargetType          :RecipeBread ;
-  dwec:forRelationshipType    [ dwec:inversePath dwec:related ] ;
+  dwec:forType                :RecipeEntree ;
+  dwec:forTargetType          :Recipe ;
+  dwec:forRelationshipType    dwec:related ;
   dwec:relationshipTerm       [
     rdf:type      dwec:RelationshipTerm ;
-    rdfs:label    "is substituted by" ;
-    label:plural  "are substited by" ;
+    rdfs:label    "pairs well with" ;
+    label:plural  "pair well with" ;
   ] ;
   dwec:resourceTerm [
-      rdf:type      dwec:ResourceTerm ;
-      rdfs:label    "Bread" ;
-      label:plural  "Breads" ;
+    rdf:type      dwec:ResourceTerm ;
+    rdfs:label    "Recipe" ;
+    label:plural  "Recipes" ;
   ] ;
 .
 
@@ -549,6 +563,15 @@
   dct:description "Marie's favorite recipes." ;
   dct:issued      "2021-11-19T19:49:50.396Z"^^xsd:dateTime ;
   dct:modified    "2021-11-19T19:49:50.396Z"^^xsd:dateTime ;
+.
+
+:Catalog-SpecialOccasions
+  a               dwec:Catalog ;
+  dct:identifier  "Special Occasions" ;
+  dct:title       "Special Occasions" ;
+  dct:description "Menus and recipes for special days." ;
+  dct:issued      "2021-11-21T15:37:14.789Z"^^xsd:dateTime ;
+  dct:modified    "2021-11-21T15:37:14.789Z"^^xsd:dateTime ;
 .
 
 # # Wrapping it all up

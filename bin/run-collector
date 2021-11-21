@@ -32,6 +32,7 @@ const RESERVED_TAGS = {
   CLASS_BREAD: "Bread",
   CLASS_DESSERT: "Dessert",
   CLASS_ENTREE: "Entree",
+  CLASS_SIDE: "Sides",
   DIETARY_GLUTEN_FREE: "Gluten Free",
   DIETARY_VEGAN: "Vegan",
   DIETARY_VEGETARIAN: "Vegetarian",
@@ -135,6 +136,10 @@ function parseCategories(categories) {
       }
       case RESERVED_TAGS.CLASS_ENTREE: {
         subclass = ":RecipeEntree";
+        return;
+      }
+      case RESERVED_TAGS.CLASS_SIDE: {
+        subclass = ":RecipeSide";
         return;
       }
       case RESERVED_TAGS.DIETARY_GLUTEN_FREE: {
@@ -282,7 +287,7 @@ function generateTTLForRecipe(filename) {
     triple("rdf:type", subclass),
     triple("dct:identifier", uid, { quoted: true }),
     triple("dct:title", name, { quoted: true }),
-    triple("dwec:description", description, { quoted: true }),
+    triple("dct:description", description, { quoted: true }),
     triple("dwec:hasAssetStatus", status),
     triple("dwec:textTag", tags, { quoted: true }),
     triple(":cook_time", cook_time, { quoted: true }),
