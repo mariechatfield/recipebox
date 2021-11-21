@@ -277,7 +277,7 @@ function generateTTLForRecipe(filename, index = null) {
     triple(':dietary_preferences', dietaryPreferences),
     triple(':difficulty', difficulty),
     triple(':directions', directions, { quoted: true }),
-    triple(':image_base64', `"${photo_data}"^^xsd:anyURI`),
+    triple(':image_base64', photo_data ? `"${photo_data}"^^xsd:anyURI` : null),
     triple(':ingredients', ingredients, { quoted: true }),
     triple(':leavening', leavening),
     triple(':notes', notes, { quoted: true }),
