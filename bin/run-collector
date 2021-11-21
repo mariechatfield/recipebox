@@ -231,7 +231,7 @@ function parseCategories(categories) {
   };
 }
 
-function generateTTLForRecipe(filename, index = null) {
+function generateTTLForRecipe(filename) {
   const recipeFile = JSON.parse(
     fs.readFileSync(filename, { encoding: "utf-8" })
   );
@@ -314,12 +314,9 @@ function generateTTLForRecipe(filename, index = null) {
     )
     .join("");
 
-  const commentPrefix =
-    typeof index === "number" ? `Recipe ${index + 1}. ` : "";
-
   return `
 # --------------------------
-# ${commentPrefix}${name}
+# ${name}
 ${statement}
 ${catalogRecord}
 ${catalogEntries}
