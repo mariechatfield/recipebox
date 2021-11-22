@@ -1,14 +1,40 @@
 const fs = require("fs");
 
-const CATALOG_DIRECTORY = "catalog";
-const RECIPE_DIRECTORY = "recipes";
+const BUILD_DIRECTORY = "build";
+const CATALOG_DIRECTORY = `${BUILD_DIRECTORY}/catalog`;
+const RECIPE_DIRECTORY = `${BUILD_DIRECTORY}/recipes/`;
 const STATIC_DIRECTORY = `${RECIPE_DIRECTORY}/static`;
+
+// Location of the hand-written metadata profile TTL files
+const METADATA_PROFILE_DIRECTORY = "catalog";
 
 const AUDIT_LOG = `${STATIC_DIRECTORY}/auditLog.json`;
 const IGNORED_IDS = `${STATIC_DIRECTORY}/ignoredIds.json`;
 
 function startProcess(processName) {
   console.log(`\n----------  ${processName}  ----------\n`);
+  init();
+}
+
+function initDirectory(path) {
+  if (!fs.existsSync(path)) {
+    fs.mkdirSync(path);
+  }
+}
+
+function initJSON(path) {
+  if (!fs.existsSync(path)) {
+    fs.writeFileSync(path, "{}", { encoding: "utf-8" });
+  }
+}
+
+function init() {
+  initDirectory(BUILD_DIRECTORY);
+  initDirectory(CATALOG_DIRECTORY);
+  initDirectory(RECIPE_DIRECTORY);
+  initDirectory(STATIC_DIRECTORY);
+  initJSON(AUDIT_LOG);
+  initJSON(IGNORED_IDS);
 }
 
 function escapeForFilePath(originalString) {
@@ -68,12 +94,28 @@ async function updateAuditLog() {
   });
 }
 
+async function ignoreId(recipeId, reason) {
+  const currentIgnoredIds = JSON.parse(
+    fs.readFileSync(IGNORED_IDS, { encoding: "utf-8" })
+  );
+
+  currentIgnoredIds[recipeId] = {
+    reason,
+  };
+
+  fs.writeFileSync(IGNORED_IDS, JSON.stringify(currentIgnoredIds, null, 2), {
+    encoding: "utf-8",
+  });
+}
+
 module.exports = {
   AUDIT_LOG,
   CATALOG_DIRECTORY,
+  METADATA_PROFILE_DIRECTORY,
   IGNORED_IDS,
   RECIPE_DIRECTORY,
   escapeForFilePath,
+  ignoreId,
   mapByUID,
   startProcess,
   updateAuditLog,

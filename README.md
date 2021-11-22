@@ -90,30 +90,37 @@ Runs the collector over any recipe data and generates updated TTL files. Does _n
     - menu.ttl
       # Hand-written _instances_ of :Menu classes.
 
-    - recipes.ttl
-      # Generated _instances_ of :Recipe classes.
-      # Updated by running the recipe collector.
-
-- recipes/
-  # The collection of JSON files synced directly from Paprika,
-  # with minimal adaptation.
-
-    - static/
-      # Files that are _not_ directly recipes but contain relevant
-      # information about Paprika recipes by UID.
-
-        - auditLog.json
-          # Map of Paprika recipe UID to the current hash and
-          # file location. Used to determine which recipes (if any)
-          # need to be created/updated/deleted during syncs.
-          # Automatically updated after every sync or export parse.
-
-        - ignoredIds.json
-          # Map of Paprika recipe UIDs to skip when syncing from cloud.
-          # Manually update this if there is a recipe that Paprika cloud
-          # stores but that we do not want to sync.
-
 - bin/
   # Node scripts to perform syncing, collecting, and uploading actions.
   # See the Usage section for details.
+
+- build/
+  # Generated files, created and updated by the Node scripts
+
+    - recipes/
+      # The collection of JSON files synced directly from Paprika,
+      # with minimal adaptation.
+
+        - static/
+          # Files that are _not_ directly recipes but contain relevant
+          # information about Paprika recipes by UID.
+
+            - auditLog.json
+              # Map of Paprika recipe UID to the current hash and
+              # file location. Used to determine which recipes (if any)
+              # need to be created/updated/deleted during syncs.
+              # Automatically updated after every sync or export parse.
+
+            - ignoredIds.json
+              # Map of Paprika recipe UIDs to skip when syncing from cloud.
+              # Manually update this if there is a recipe that Paprika cloud
+              # stores but that we do not want to sync.
+
+    - catalog/
+      # Copy of the metadata profile TTL files from /catalog, plus the
+      # generated TTL files from the collector, to upload to DDW
+
+        - recipes.ttl
+          # Generated _instances_ of :Recipe classes.
+          # Updated by running the recipe collector.
 ```

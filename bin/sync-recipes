@@ -11,6 +11,7 @@ const {
   mapByUID,
   startProcess,
   updateAuditLog,
+  ignoreId,
 } = require("./utils");
 
 const PAPRIKA_AUTH = `${process.env.PAPRIKA_USERNAME}:${process.env.PAPRIKA_PASSWORD}`;
@@ -139,6 +140,11 @@ async function saveRecipe(recipeId, filePath = "") {
   }
 
   const recipe = response.result;
+
+  if (recipe.in_trash) {
+    ignoreId(recipe.uid, "Recipe was deleted");
+    return;
+  }
 
   const recipeFilePath = filePath || `${escapeForFilePath(recipe.name)}.json`;
 

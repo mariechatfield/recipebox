@@ -2,7 +2,11 @@
 const fs = require("fs");
 const https = require("https");
 const FormData = require("form-data");
-const { startProcess, CATALOG_DIRECTORY } = require("./utils");
+const {
+  startProcess,
+  CATALOG_DIRECTORY,
+  METADATA_PROFILE_DIRECTORY,
+} = require("./utils");
 
 const DDW_API = "https://ddw-dwapipublic.dev.data.world/v0";
 const UPLOAD_DATASET = "recipebox/ddw-catalogs";
@@ -44,6 +48,16 @@ function uploadFiles(filePaths) {
 }
 
 function getFilesToUpload() {
+  // Copy metadata profile files into catalog directory
+  fs.readdirSync(METADATA_PROFILE_DIRECTORY)
+    .filter((filePath) => filePath.endsWith(".ttl"))
+    .map((filePath) => {
+      fs.copyFileSync(
+        `${METADATA_PROFILE_DIRECTORY}/${filePath}`,
+        `${CATALOG_DIRECTORY}/${filePath}`
+      );
+    });
+
   const ttlFiles = fs
     .readdirSync(CATALOG_DIRECTORY)
     .filter((filePath) => filePath.endsWith(".ttl"))
