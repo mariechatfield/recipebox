@@ -2,7 +2,7 @@
 
 A tiny catalog collector for my personal collection of recipes.
 
-View the [live catalog](https://ddw-corewebapp.dev.data.world/recipebox).
+View the [live catalog](https://data.world/recipebox).
 
 - Maintain metadata profile with my custom cooking ontology
 - Sync recipes from [Paprika app](https://www.paprikaapp.com/)
