@@ -8,7 +8,7 @@ const {
   METADATA_PROFILE_DIRECTORY,
 } = require("./utils");
 
-const DDW_API = "https://ddw-dwapipublic.dev.data.world/v0";
+const DDW_API = "https://api.data.world/v0";
 const UPLOAD_DATASET = "recipebox/ddw-catalogs";
 const UPLOAD_PATH = `uploads/${UPLOAD_DATASET}/files`;
 
