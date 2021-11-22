@@ -19,3 +19,7 @@ jobs:
       - name: Sync recipes
         run: |
           npm run sync
+        env:
+          PAPRIKA_USERNAME: ${{ secrets.PAPRIKA_USERNAME }}
+          PAPRIKA_PASSWORD: ${{ secrets.PAPRIKA_PASSWORD }}
+          DDW_TOKEN: ${{ secrets.DDW_TOKEN }}
