@@ -525,18 +525,73 @@
   ] ;
 .
 
-# 1 Recipe pairs well with this Entree
-# 5 Recipes pair well with this Entree
-:EntreeToRecipe
+:hasStarterCourse
+  a owl:ObjectProperty ;
+  rdfs:subPropertyOf  dwec:related ;
+.
+
+# 1 Recipes is the Starter Course for this Menu
+# 5 Recipess are the Starter Course for this Menu
+:MenuToRecipe_StarterCourse
   rdf:type                    dwec:RelationshipPresentation ;
   dwec:inRelationshipSection  :RelationshipSection ;
-  dwec:forType                :RecipeEntree ;
+  dwec:forType                :Menu ;
   dwec:forTargetType          :Recipe ;
-  dwec:forRelationshipType    dwec:related ;
+  dwec:forRelationshipType    :hasStarterCourse ;
   dwec:relationshipTerm       [
     rdf:type      dwec:RelationshipTerm ;
-    rdfs:label    "pairs well with" ;
-    label:plural  "pair well with" ;
+    rdfs:label    "is the Starter Course for" ;
+    label:plural  "are the Starter Course for" ;
+  ] ;
+  dwec:resourceTerm [
+    rdf:type      dwec:ResourceTerm ;
+    rdfs:label    "Recipe" ;
+    label:plural  "Recipes" ;
+  ] ;
+.
+
+:hasMainCourse
+  a owl:ObjectProperty ;
+  rdfs:subPropertyOf  dwec:related ;
+.
+
+# 1 Recipes is the Main Course for this Menu
+# 5 Recipess are the Main Course for this Menu
+:MenuToRecipe_MainCourse
+  rdf:type                    dwec:RelationshipPresentation ;
+  dwec:inRelationshipSection  :RelationshipSection ;
+  dwec:forType                :Menu ;
+  dwec:forTargetType          :Recipe ;
+  dwec:forRelationshipType    :hasMainCourse ;
+  dwec:relationshipTerm       [
+    rdf:type      dwec:RelationshipTerm ;
+    rdfs:label    "is the Main Course for" ;
+    label:plural  "are the Main Course for" ;
+  ] ;
+  dwec:resourceTerm [
+    rdf:type      dwec:ResourceTerm ;
+    rdfs:label    "Recipe" ;
+    label:plural  "Recipes" ;
+  ] ;
+.
+
+:hasDessertCourse
+  a owl:ObjectProperty ;
+  rdfs:subPropertyOf  dwec:related ;
+.
+
+# 1 Recipes is the Dessert Course for this Menu
+# 5 Recipess are the Dessert Course for this Menu
+:MenuToRecipe_DessertCourse
+  rdf:type                    dwec:RelationshipPresentation ;
+  dwec:inRelationshipSection  :RelationshipSection ;
+  dwec:forType                :Menu ;
+  dwec:forTargetType          :Recipe ;
+  dwec:forRelationshipType    :hasDessertCourse ;
+  dwec:relationshipTerm       [
+    rdf:type      dwec:RelationshipTerm ;
+    rdfs:label    "is the Dessert Course for" ;
+    label:plural  "are the Dessert Course for" ;
   ] ;
   dwec:resourceTerm [
     rdf:type      dwec:ResourceTerm ;

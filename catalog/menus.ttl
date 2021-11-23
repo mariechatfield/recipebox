@@ -27,11 +27,13 @@
     dct:identifier          "FancyDinnerParty" ;
     dct:title               "Fancy Dinner Party (Summer)" ;
     dct:description         "Having friends over for a delightful dinner." ;
-    # Cornmeal-Crusted Chicken Cutlets with Zucchini Ribbon Salad
-    dwec:related            :RecipeEntree-D442FA69-0191-4104-9391-E049B7EB7AE3 ;
-    # Nilla Wafer Banana Pudding
-    dwec:related            :RecipeDessert-8E77CDBB-BBFF-4762-8C06-95E339A8F455 ;
-    # Sweet Tea
+                            # Cornmeal-Crusted Chicken Cutlets with Zucchini Ribbon Salad
+    :hasMainCourse          :RecipeEntree-D442FA69-0191-4104-9391-E049B7EB7AE3 ,
+                            # Best Mashed Potatoes
+                            :RecipeSide-56AC7698-B16E-4481-8E27-978976B430BE ;
+                            # Nilla Wafer Banana Pudding
+    :hasDessertCourse       :RecipeDessert-8E77CDBB-BBFF-4762-8C06-95E339A8F455 ;
+                            # Sweet Tea
     dwec:related            :Recipe-408DB3B3-65A3-491D-89F8-328AD57203FA ;
 .
 
