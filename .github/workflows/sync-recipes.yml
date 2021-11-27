@@ -40,8 +40,8 @@ jobs:
           # evict caches that exceed the storage capacity of this account.
           #
           # See: https://docs.github.com/en/actions/advanced-guides/caching-dependencies-to-speed-up-workflows#matching-a-cache-key
-          key: ${{ runner.os }}-build-${{ steps.get-timestamp.outputs.timestamp }}
-          restore-keys: ${{ runner.os}}-build-
+          key: catalog-build-${{ steps.get-timestamp.outputs.timestamp }}
+          restore-keys: catalog-build-
 
       - name: Sync recipes
         run: |
