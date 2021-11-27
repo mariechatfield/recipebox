@@ -94,7 +94,7 @@ function checkHash() {
     lastHash = catalogHash;
   }
 
-  console.log("Last hash: ", lastHash);
+  console.log("-- Previous hash:", lastHash);
 
   const hashSum = crypto.createHash("sha256");
 
@@ -108,12 +108,12 @@ function checkHash() {
 
   if (lastHash === currentHash) {
     console.log(
-      "✅ No changes to catalog files were made, so no upload is needed."
+      "\n✅ No changes to catalog files were made, so no upload is needed."
     );
     process.exit(0);
   }
 
-  console.log("Saving hash of current files: ", currentHash);
+  console.log(`-- Saving current hash: ${currentHash}\n`);
 
   fs.writeFileSync(
     CATALOG_METADATA,
