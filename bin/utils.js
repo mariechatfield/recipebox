@@ -10,7 +10,7 @@ const METADATA_PROFILE_DIRECTORY = "catalog";
 
 const AUDIT_LOG = `${STATIC_DIRECTORY}/auditLog.json`;
 const IGNORED_IDS = `${STATIC_DIRECTORY}/ignoredIds.json`;
-const CATALOG_METADATA = `${BUILD_DIRECTORY}/catalogMetadata.json`;
+const CATALOG_METADATA = `${CATALOG_DIRECTORY}/catalogMetadata.json`;
 
 function startProcess(processName) {
   console.log(`\n----------  ${processName}  ----------\n`);
