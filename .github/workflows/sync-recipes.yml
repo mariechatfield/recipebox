@@ -2,6 +2,9 @@ name: Sync Recipes
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   sync_recipes:
@@ -19,7 +22,8 @@ jobs:
       - name: Get timestamp
         id: get-timestamp
         run: |
-          echo "::set-output name=timestamp::$(/bin/date -u "%Y%m%d%H%M%s")"
+          echo "::set-output name=timestamp::$(/bin/date -u "+%Y%m%d%H%M%s")"
+        shell: bash
 
       - name: Cache build
         uses: actions/cache@v2
