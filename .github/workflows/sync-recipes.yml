@@ -16,6 +16,12 @@ jobs:
         run: |
           npm install
 
+      - name: Cache build
+        uses: actions/cache@v2
+        with:
+          path: build
+          key: ${{ runner.os }}-build
+
       - name: Sync recipes
         run: |
           npm run sync
