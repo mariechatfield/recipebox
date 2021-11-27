@@ -16,11 +16,28 @@ jobs:
         run: |
           npm install
 
+      - name: Get timestamp
+        id: get-timestamp
+        run: |
+          echo "::set-output name=timestamp::$(/bin/date -u "%Y%m%d%H%M%s")"
+
       - name: Cache build
         uses: actions/cache@v2
         with:
           path: build
-          key: ${{ runner.os }}-build
+          # HACK: We really only want _one_ cache, that we incrementally update.
+          # But there's no way to specify to re-write an existing cache.
+          # Instead, we ensure we always _miss_ on the actual cache key by using the
+          # timestamp, and pass the actual key we want as a restore-key.
+          #
+          # This means we'll read the most recent cache that matches our prefix,
+          # and we'll always write a new one for the next build to read. This is
+          # space intensive, but this is a pretty small cache of JSON files and GitHub will
+          # evict caches that exceed the storage capacity of this account.
+          #
+          # See: https://docs.github.com/en/actions/advanced-guides/caching-dependencies-to-speed-up-workflows#matching-a-cache-key
+          key: ${{ runner.os }}-build-${{ steps.get-timestamp.outputs.timestamp }}
+          restore-keys: ${{ runner.os}}-build-
 
       - name: Sync recipes
         run: |
