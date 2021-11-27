@@ -94,6 +94,8 @@ function checkHash() {
     lastHash = catalogHash;
   }
 
+  console.log("Last hash: ", lastHash);
+
   const hashSum = crypto.createHash("sha256");
 
   fs.readdirSync(CATALOG_DIRECTORY)
@@ -110,6 +112,8 @@ function checkHash() {
     );
     process.exit(0);
   }
+
+  console.log("Saving hash of current files: ", currentHash);
 
   fs.writeFileSync(
     CATALOG_METADATA,
