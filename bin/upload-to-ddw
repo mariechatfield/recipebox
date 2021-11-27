@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 const fs = require("fs");
+const crypto = require("crypto");
 const https = require("https");
 const FormData = require("form-data");
 const {
   startProcess,
   CATALOG_DIRECTORY,
+  CATALOG_METADATA,
   METADATA_PROFILE_DIRECTORY,
 } = require("./utils");
 
@@ -83,8 +85,41 @@ async function uploadCatalog() {
   }
 }
 
+function checkHash() {
+  let lastHash = null;
+
+  if (fs.existsSync(CATALOG_METADATA)) {
+    const { catalogHash } = JSON.parse(fs.readFileSync(CATALOG_METADATA));
+
+    lastHash = catalogHash;
+  }
+
+  const hashSum = crypto.createHash("sha256");
+
+  fs.readdirSync(CATALOG_DIRECTORY)
+    .filter((file) => file.endsWith(".ttl"))
+    .forEach((file) =>
+      hashSum.update(fs.readFileSync(`${CATALOG_DIRECTORY}/${file}`))
+    );
+
+  const currentHash = hashSum.digest("base64");
+
+  if (lastHash === currentHash) {
+    console.log(
+      "✅ No changes to catalog files were made, so no upload is needed."
+    );
+    process.exit(0);
+  }
+
+  fs.writeFileSync(
+    CATALOG_METADATA,
+    JSON.stringify({ catalogHash: currentHash }, null, 2)
+  );
+}
+
 async function run() {
   startProcess("Upload to DDW");
+  checkHash();
   uploadCatalog();
 }
 

@@ -10,6 +10,7 @@ const METADATA_PROFILE_DIRECTORY = "catalog";
 
 const AUDIT_LOG = `${STATIC_DIRECTORY}/auditLog.json`;
 const IGNORED_IDS = `${STATIC_DIRECTORY}/ignoredIds.json`;
+const CATALOG_METADATA = `${BUILD_DIRECTORY}/catalogMetadata.json`;
 
 function startProcess(processName) {
   console.log(`\n----------  ${processName}  ----------\n`);
@@ -111,6 +112,7 @@ async function ignoreId(recipeId, reason) {
 module.exports = {
   AUDIT_LOG,
   CATALOG_DIRECTORY,
+  CATALOG_METADATA,
   METADATA_PROFILE_DIRECTORY,
   IGNORED_IDS,
   RECIPE_DIRECTORY,
